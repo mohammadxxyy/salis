@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <linearGradient id="c3GradBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4285F4" />
+      <stop offset="100%" stop-color="#2B66D2" />
+    </linearGradient>
+    <linearGradient id="c3GradRed" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#EA4335" />
+      <stop offset="100%" stop-color="#D02D1E" />
+    </linearGradient>
+    <linearGradient id="c3GradYellow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FBBC05" />
+      <stop offset="100%" stop-color="#EA9F00" />
+    </linearGradient>
+    <linearGradient id="c3GradGreen" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34A853" />
+      <stop offset="100%" stop-color="#1E8E3E" />
+    </linearGradient>
+
+    <!-- Dark & Light Tile Shadows -->
+    <filter id="c3Shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="20" stdDeviation="24" flood-color="#0F172A" flood-opacity="0.18" />
+      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#0F172A" flood-opacity="0.1" />
+    </filter>
+    <filter id="c3Glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Deep Slate Modern Glass Tile -->
+  <rect x="24" y="24" width="464" height="464" rx="112" fill="#181A20" filter="url(#c3Shadow)" />
+
+  <g transform="translate(256, 256) scale(1.15)">
+    <!-- Quadrant 1: Google Blue Petal (Upper Right) -->
+    <path d="M 0,-130 C 50,-130 115,-75 115,-15 C 115,25 75,55 0,0 Z" 
+          fill="url(#c3GradBlue)" />
+
+    <!-- Quadrant 2: Google Red Petal (Upper Left) -->
+    <path d="M 0,-130 C -50,-130 -115,-75 -115,-15 C -115,25 -75,55 0,0 Z" 
+          fill="url(#c3GradRed)" />
+
+    <!-- Quadrant 3: Google Yellow Petal (Bottom Left) -->
+    <path d="M -115,-15 C -115,55 -55,130 0,130 C 15,75 -25,25 0,0 Z" 
+          fill="url(#c3GradYellow)" />
+
+    <!-- Quadrant 4: Google Green Petal (Bottom Right) -->
+    <path d="M 115,-15 C 115,55 55,130 0,130 C -15,75 25,25 0,0 Z" 
+          fill="url(#c3GradGreen)" />
+
+    <!-- Center Gemini Core Glow -->
+    <circle cx="0" cy="0" r="18" fill="#FFFFFF" opacity="0.9" filter="url(#c3Glow)" />
+
+    <!-- Floating Seen Outline across the Star -->
+    <path d="M -70,25 Q -40,65 -15,25 Q 15,65 40,25 Q 70,80 15,100" 
+          fill="none" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" opacity="0.9" />
+  </g>
+</svg>

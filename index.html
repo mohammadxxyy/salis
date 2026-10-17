@@ -1,0 +1,1804 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+    <title>سَلِس | رتّب موادك وملفاتك بلمسة وحدة</title>
+    <meta name="description" content="منصة سَلِس الأكاديمية - رتّب موادك ومحاضراتك الجامعية وافتح سلايدات البوربوينت والوورد وملفات الـ PDF بنفس شكلها وتنسيقها الأصلي.">
+    <meta name="theme-color" content="#1a73e8">
+    <link rel="icon" type="image/jpeg" href="assets/logo.jpg">
+    <link rel="apple-touch-icon" href="assets/logo.jpg">
+    <link rel="manifest" href="manifest.json">
+
+    <!-- Open Graph / Facebook / WhatsApp Preview -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="سَلِس | المنصة الأكاديمية الذكية">
+    <meta property="og:description" content="رتّب موادك ومحاضراتك وافتح ملفاتك وسلايداتك بلمسة وحدة بدون ما تخرب.">
+    <meta property="og:image" content="assets/logo.jpg">
+
+    <!-- Twitter Preview -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="سَلِس | المنصة الأكاديمية الذكية">
+    <meta name="twitter:description" content="رتّب موادك ومحاضراتك وافتح ملفاتك وسلايداتك بلمسة وحدة بدون ما تخرب.">
+    <meta name="twitter:image" content="assets/logo.jpg">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Tajawal:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Tajawal', 'Plus Jakarta Sans', 'sans-serif'],
+                        mono: ['Consolas', 'Monaco', 'monospace']
+                    },
+                    colors: {
+                        google: {
+                            blue: '#1a73e8',
+                            blueDark: '#a8c7fa',
+                            blueContainer: '#d3e3fd',
+                            blueContainerDark: '#004a77',
+                            red: '#ea4335',
+                            yellow: '#f9ab00',
+                            green: '#34a853',
+                            surface: '#f8fafd',
+                            surfaceDark: '#131314',
+                            container: '#ffffff',
+                            containerDark: '#1e1f20',
+                            containerHigh: '#f0f4f9',
+                            containerHighDark: '#282a2c',
+                            outline: '#e1e3e1',
+                            outlineDark: '#37393b',
+                            textPrimary: '#1f1f1f',
+                            textPrimaryDark: '#e3e3e3',
+                            textSecondary: '#5f6368',
+                            textSecondaryDark: '#9aa0a6'
+                        }
+                    },
+                    boxShadow: {
+                        'm3-1': '0 1px 2px 0 rgba(0, 0, 0, 0.05), 0 1px 3px 1px rgba(0, 0, 0, 0.05)',
+                        'm3-2': '0 2px 6px 2px rgba(0, 0, 0, 0.15)',
+                        'm3-3': '0 4px 12px 3px rgba(0, 0, 0, 0.15)'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://unpkg.com/docx-preview@0.1.20/dist/docx-preview.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pptx-preview@1.0.5/dist/pptx-preview.umd.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+
+    <style>
+        :root {
+            --surface-bg: #f8fafd;
+            --container-bg: #ffffff;
+            --container-high: #f0f4f9;
+            --border-subtle: #e1e3e1;
+            --text-main: #1f1f1f;
+            --text-sub: #5f6368;
+        }
+        .dark {
+            --surface-bg: #131314;
+            --container-bg: #1e1f20;
+            --container-high: #282a2c;
+            --border-subtle: #37393b;
+            --text-main: #e3e3e3;
+            --text-sub: #9aa0a6;
+        }
+        body {
+            background-color: var(--surface-bg);
+            color: var(--text-main);
+            font-family: 'Tajawal', sans-serif;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+        ::-webkit-scrollbar { width: 7px; height: 7px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #5f636840; border-radius: 9999px; }
+        ::-webkit-scrollbar-thumb:hover { background: #5f636880; }
+
+        #pptxVisualMount {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            padding: 16px;
+            width: 100%;
+            max-width: 100%;
+        }
+        #pptxVisualMount canvas,
+        #pptxVisualMount .pptx-preview-wrapper {
+            background: transparent !important;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+            border-radius: 12px;
+            overflow: hidden;
+            max-width: 100% !important;
+            height: auto !important;
+        }
+        #docxVisualMount .docx-wrapper {
+            background: transparent !important;
+            padding: 16px 0 !important;
+        }
+        #docxVisualMount section.docx {
+            box-shadow: 0 4px 16px rgba(0,0,0,0.2) !important;
+            border-radius: 8px;
+            margin-bottom: 24px !important;
+            color: #1f1f1f !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+        }
+        .smooth-m3 {
+            transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+        }
+
+        .viewer-fullscreen-mode {
+            position: fixed !important;
+            inset: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            height: 100dvh !important;
+            z-index: 99999 !important;
+            margin: 0 !important;
+            border-radius: 0 !important;
+            background-color: var(--surface-bg) !important;
+        }
+        .viewer-fullscreen-mode #viewerRenderArea {
+            height: calc(100vh - 60px) !important;
+            height: calc(100dvh - 60px) !important;
+        }
+
+        @supports (padding: env(safe-area-inset-top)) {
+            header {
+                padding-top: env(safe-area-inset-top);
+            }
+        }
+
+        @keyframes googleFlow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+        @keyframes googleBreatheAndBorn {
+            0% {
+                opacity: 0.18;
+                filter: drop-shadow(0 0 2px rgba(66, 133, 244, 0.25));
+                transform: scaleY(0.75);
+            }
+            30% {
+                opacity: 0.85;
+                filter: drop-shadow(0 0 8px rgba(66, 133, 244, 0.75)) drop-shadow(0 0 14px rgba(234, 67, 53, 0.5));
+                transform: scaleY(1.15);
+            }
+            60% {
+                opacity: 1;
+                filter: drop-shadow(0 0 12px rgba(251, 188, 5, 0.85)) drop-shadow(0 0 18px rgba(52, 168, 83, 0.65));
+                transform: scaleY(1.3);
+            }
+            85% {
+                opacity: 0.35;
+                filter: drop-shadow(0 0 3px rgba(66, 133, 244, 0.3));
+                transform: scaleY(0.8);
+            }
+            100% {
+                opacity: 0.18;
+                filter: drop-shadow(0 0 2px rgba(66, 133, 244, 0.25));
+                transform: scaleY(0.75);
+            }
+        }
+        .google-bar {
+            background: linear-gradient(90deg, #4285f4 0%, #ea4335 25%, #fbbc05 50%, #34a853 75%, #4285f4 100%);
+            background-size: 200% 100%;
+            animation: googleFlow 4s linear infinite;
+        }
+        .google-bar-alive {
+            background: linear-gradient(90deg, #4285f4 0%, #ea4335 25%, #fbbc05 50%, #34a853 75%, #4285f4 100%);
+            background-size: 200% 100%;
+            animation: googleFlow 3s linear infinite, googleBreatheAndBorn 3.8s ease-in-out infinite;
+            transform-origin: top center;
+        }
+        .google-bar-fast {
+            background: linear-gradient(90deg, #4285f4 0%, #ea4335 25%, #fbbc05 50%, #34a853 75%, #4285f4 100%);
+            background-size: 200% 100%;
+            animation: googleFlow 2.5s linear infinite;
+        }
+    </style>
+</head>
+<body class="h-screen flex flex-col overflow-hidden select-none">
+
+    <!-- Navbar -->
+    <header class="h-16 px-5 border-b border-google-outline dark:border-google-outlineDark flex items-center justify-between bg-google-surface dark:bg-google-surfaceDark shrink-0 z-20 relative">
+        <div class="absolute top-0 left-0 right-0 h-[5px] google-bar-alive z-30 pointer-events-none"></div>
+        <div class="flex items-center gap-3">
+            <button id="toggleSidebarBtn" class="p-2 rounded-full hover:bg-google-containerHigh dark:hover:bg-google-containerHighDark text-google-textSecondary dark:text-google-textSecondaryDark transition" title="القائمة">
+                <i data-lucide="menu" class="w-5 h-5"></i>
+            </button>
+            <div class="flex items-center gap-2.5 cursor-pointer" onclick="navigateHome()">
+                <div class="w-9 h-9 rounded-xl overflow-hidden shadow-m3-1 flex items-center justify-center bg-white p-0.5 border border-google-outline dark:border-google-outlineDark">
+                    <img id="appNavbarLogo" src="assets/salis_logo_1.jpg" alt="سَلِس" class="w-full h-full object-cover rounded-lg">
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-lg font-black tracking-tight text-google-textPrimary dark:text-google-textPrimaryDark leading-tight">سَلِس</span>
+                    <span class="text-[10px] text-google-textSecondary dark:text-google-textSecondaryDark -mt-0.5">كل موادك بمكان واحد</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="hidden md:flex flex-1 max-w-xl mx-8 relative">
+            <div class="w-full flex items-center h-11 px-4 rounded-full bg-google-containerHigh dark:bg-google-containerHighDark border border-transparent focus-within:border-google-blue dark:focus-within:border-google-blueDark focus-within:bg-google-container dark:focus-within:bg-google-containerDark smooth-m3 shadow-sm">
+                <i data-lucide="search" class="w-4 h-4 text-google-textSecondary dark:text-google-textSecondaryDark ml-3 shrink-0"></i>
+                <input type="text" id="globalSearchInput" placeholder="دوّر على أي مادة أو ملف..." 
+                    class="w-full bg-transparent text-sm text-google-textPrimary dark:text-google-textPrimaryDark placeholder-google-textSecondary dark:placeholder-google-textSecondaryDark focus:outline-none">
+                <button id="clearSearchBtn" class="hidden text-google-textSecondary hover:text-google-textPrimary text-xs px-1">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+            <button onclick="openDeveloperModal()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full hover:bg-google-containerHigh dark:hover:bg-google-containerHighDark text-google-textSecondary dark:text-google-textSecondaryDark transition text-xs font-bold" title="عن المطور">
+                <div class="w-5 h-5 rounded-full bg-gradient-to-tr from-google-blue to-purple-600 flex items-center justify-center text-white text-[10px] font-bold shadow-sm">M</div>
+                <span class="hidden md:inline">عن المطور</span>
+            </button>
+
+            <button onclick="openNewFolderModal()" class="flex items-center gap-2 bg-google-blueContainer dark:bg-google-blueContainerDark text-google-blue dark:text-google-blueDark px-4 py-2 rounded-full text-xs font-bold hover:brightness-105 smooth-m3 shadow-sm">
+                <i data-lucide="folder-plus" class="w-4 h-4"></i>
+                <span class="hidden sm:inline">مادة جديدة</span>
+            </button>
+
+            <button id="themeToggleBtn" class="p-2.5 rounded-full hover:bg-google-containerHigh dark:hover:bg-google-containerHighDark text-google-textSecondary dark:text-google-textSecondaryDark transition" title="نهاري / ليلي">
+                <i data-lucide="sun-medium" class="w-5 h-5 hidden dark:block"></i>
+                <i data-lucide="moon" class="w-5 h-5 block dark:hidden"></i>
+            </button>
+
+            <button id="toggleNotesDrawerBtn" class="p-2.5 rounded-full hover:bg-google-containerHigh dark:hover:bg-google-containerHighDark text-google-textSecondary dark:text-google-textSecondaryDark transition" title="ملاحظاتي">
+                <i data-lucide="sticky-note" class="w-5 h-5"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Workspace -->
+    <div class="flex-1 flex overflow-hidden relative">
+
+        <!-- Sidebar Backdrop on Mobile -->
+        <div id="sidebarBackdrop" onclick="closeSidebarMobile()" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-30 hidden md:hidden transition-opacity"></div>
+
+        <!-- Sidebar -->
+        <aside id="mainSidebar" class="fixed md:static inset-y-0 right-0 z-40 w-72 md:w-64 bg-google-surface dark:bg-google-surfaceDark border-l border-google-outline dark:border-google-outlineDark flex flex-col justify-between p-3 shrink-0 smooth-m3 transition-transform duration-300 md:translate-x-0 translate-x-full md:shadow-none shadow-2xl">
+            <div class="space-y-4">
+                <div>
+                    <button onclick="openNewFolderModal()" class="w-full h-12 bg-google-container dark:bg-google-containerHighDark hover:shadow-m3-2 border border-google-outline dark:border-google-outlineDark text-google-textPrimary dark:text-google-textPrimaryDark rounded-2xl flex items-center justify-center gap-3 px-4 font-bold text-sm shadow-m3-1 smooth-m3 group">
+                        <div class="w-7 h-7 rounded-lg bg-google-blue text-white flex items-center justify-center group-hover:scale-105 transition">
+                            <i data-lucide="plus" class="w-4 h-4"></i>
+                        </div>
+                        <span>إضافة مادة جديدة</span>
+                    </button>
+                </div>
+
+                <nav class="space-y-1">
+                    <button onclick="navigateHome()" id="navAllBtn" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-full text-sm font-semibold bg-google-blueContainer dark:bg-google-blueContainerDark text-google-blue dark:text-google-blueDark smooth-m3">
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="layout-grid" class="w-4 h-4"></i>
+                            <span>كل المواد</span>
+                        </div>
+                        <span id="allSubjectsCountBadge" class="text-xs px-2 py-0.5 rounded-full bg-white/20 dark:bg-black/20">0</span>
+                    </button>
+
+                    <button onclick="openDirectUpload()" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-full text-sm font-medium text-google-textSecondary dark:text-google-textSecondaryDark hover:bg-google-containerHigh dark:hover:bg-google-containerHighDark smooth-m3">
+                        <i data-lucide="file-up" class="w-4 h-4"></i>
+                        <span>فتح ملف ع السريع</span>
+                    </button>
+
+                    <button onclick="openDeveloperModal()" class="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-full text-sm font-medium text-google-textSecondary dark:text-google-textSecondaryDark hover:bg-google-containerHigh dark:hover:bg-google-containerHighDark smooth-m3">
+                        <i data-lucide="user" class="w-4 h-4 text-google-blue dark:text-google-blueDark"></i>
+                        <span>عن المطور</span>
+                    </button>
+                </nav>
+
+                <div class="pt-2 border-t border-google-outline dark:border-google-outlineDark">
+                    <div class="flex items-center justify-between px-3 mb-2">
+                        <span class="text-xs font-bold text-google-textSecondary dark:text-google-textSecondaryDark">موادك</span>
+                        <button onclick="openNewFolderModal()" class="text-xs text-google-blue dark:text-google-blueDark hover:underline font-bold">+ ضيف مادة</button>
+                    </div>
+                    <div id="sidebarSubjectsList" class="space-y-1 max-h-56 overflow-y-auto pr-1"></div>
+                </div>
+            </div>
+
+            <div class="p-3 rounded-2xl bg-google-containerHigh dark:bg-google-containerHighDark border border-google-outline dark:border-google-outlineDark space-y-2">
+                <div class="flex items-center justify-between text-xs text-google-textSecondary dark:text-google-textSecondaryDark">
+                    <span class="flex items-center gap-1.5 font-bold">
+                        <i data-lucide="hard-drive" class="w-3.5 h-3.5 text-google-blue dark:text-google-blueDark"></i> المساحة المستخدمة
+                    </span>
+                    <span id="storageUsageText" class="font-mono text-[11px]">0 MB</span>
+                </div>
+                <div class="w-full h-1.5 rounded-full bg-google-outline dark:bg-google-outlineDark overflow-hidden">
+                    <div id="storageProgressBar" class="h-full bg-google-blue dark:bg-google-blueDark rounded-full" style="width: 0%;"></div>
+                </div>
+                <p class="text-[10px] text-google-textSecondary dark:text-google-textSecondaryDark leading-tight">
+                    كل ملفاتك محفوظة على جهازك ومحدش غيرك بشوفها.
+                </p>
+            </div>
+        </aside>
+
+        <!-- Main Viewports -->
+        <main class="flex-1 overflow-y-auto relative bg-google-surface dark:bg-google-surfaceDark flex flex-col" id="mainContainer">
+            
+            <!-- Welcome View -->
+            <section id="welcomeView" class="hidden flex-1 flex flex-col items-center justify-center p-6 md:p-12 text-center max-w-4xl mx-auto my-auto space-y-8">
+                <div class="flex flex-col items-center space-y-4">
+                    <div class="relative">
+                        <div class="w-24 h-24 rounded-3xl bg-google-container dark:bg-google-containerDark border border-google-outline dark:border-google-outlineDark flex items-center justify-center shadow-m3-2 overflow-hidden p-2">
+                            <img id="welcomeHeroLogo" src="assets/salis_logo_1.jpg" alt="سَلِس" class="w-full h-full object-cover rounded-2xl shadow-sm">
+                        </div>
+                        <div class="absolute -top-1 -right-1 flex gap-1 bg-google-container dark:bg-google-containerDark p-1 rounded-full border border-google-outline dark:border-google-outlineDark shadow-sm">
+                            <span class="w-2 h-2 rounded-full bg-google-blue"></span>
+                            <span class="w-2 h-2 rounded-full bg-google-red"></span>
+                            <span class="w-2 h-2 rounded-full bg-google-yellow"></span>
+                            <span class="w-2 h-2 rounded-full bg-google-green"></span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-google-blueContainer dark:bg-google-blueContainerDark text-google-blue dark:text-google-blueDark text-xs font-bold">
+                            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                            <span>رتّب دراستك بسهولة</span>
+                        </div>
+                        <h2 class="text-3xl md:text-4xl font-extrabold text-google-textPrimary dark:text-google-textPrimaryDark tracking-tight">
+                            أهلاً فيك بـ <span class="bg-gradient-to-r from-google-blue to-blue-400 bg-clip-text text-transparent">سَلِس</span> 👋
+                        </h2>
+                        <div class="w-24 h-1 google-bar rounded-full mx-auto my-3 shadow-[0_0_12px_rgba(66,133,244,0.4)]"></div>
+                        <p class="text-sm md:text-base text-google-textSecondary dark:text-google-textSecondaryDark max-w-lg mx-auto leading-relaxed">
+                            رتّب موادك الجامعية ومحاضراتك بمجلدات مرتبة، وافتح سلايدات البوربوينت والوورد بنفس شكلها الأصلي بدون ما تخرب، وكل ملفاتك بتضل بأمان على جهازك.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-3 w-full max-w-md">
+                    <button onclick="openNewFolderModal()" class="w-full sm:w-auto flex items-center justify-center gap-2 bg-google-blue text-white px-7 py-3.5 rounded-2xl text-sm font-bold shadow-m3-2 hover:brightness-110 smooth-m3 group">
+                        <i data-lucide="folder-plus" class="w-5 h-5 group-hover:scale-110 transition"></i>
+                        <span>ضيف أول مادة إلك</span>
+                    </button>
+                    <button onclick="openDirectUpload()" class="w-full sm:w-auto flex items-center justify-center gap-2 bg-google-container dark:bg-google-containerDark hover:bg-google-containerHigh dark:hover:bg-google-containerHighDark border border-google-outline dark:border-google-outlineDark text-google-textPrimary dark:text-google-textPrimaryDark px-6 py-3.5 rounded-2xl text-sm font-bold smooth-m3">
+                        <i data-lucide="file-up" class="w-4 h-4 text-google-blue dark:text-google-blueDark"></i>
+                        <span>تصفح ملف ع السريع</span>
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full text-right pt-4">
+                    <div class="p-5 rounded-3xl bg-google-container dark:bg-google-containerDark border border-google-outline dark:border-google-outlineDark shadow-sm space-y-2">
+                        <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-google-blue dark:text-google-blueDark flex items-center justify-center">
+                            <i data-lucide="folder-tree" class="w-5 h-5"></i>
+                        </div>
+                        <h4 class="font-bold text-sm text-google-textPrimary dark:text-google-textPrimaryDark">مجلد لكل مادة</h4>
+                        <p class="text-xs text-google-textSecondary dark:text-google-textSecondaryDark leading-relaxed">اعمل مجلد لكل مادة بلونها وكودها عشان تضل محاضراتك منظمة وما تضيع منك.</p>
+                    </div>
+
+                    <div class="p-5 rounded-3xl bg-google-container dark:bg-google-containerDark border border-google-outline dark:border-google-outlineDark shadow-sm space-y-2">
+                        <div class="w-10 h-10 rounded-xl bg-orange-500/10 text-google-red flex items-center justify-center">
+                            <i data-lucide="monitor-play" class="w-5 h-5"></i>
+                        </div>
+                        <h4 class="font-bold text-sm text-google-textPrimary dark:text-google-textPrimaryDark">الملفات بتفتح متل ما هي</h4>
+                        <p class="text-xs text-google-textSecondary dark:text-google-textSecondaryDark leading-relaxed">سلايدات البوربوينت، الوورد، الإكسل والـ PDF بتفتح بكامل ألوانها وتنسيقها الصح.</p>
+                    </div>
+
+                    <div class="p-5 rounded-3xl bg-google-container dark:bg-google-containerDark border border-google-outline dark:border-google-outlineDark shadow-sm space-y-2">
+                        <div class="w-10 h-10 rounded-xl bg-green-500/10 text-google-green flex items-center justify-center">
+                            <i data-lucide="shield-check" class="w-5 h-5"></i>
+                        </div>
+                        <h4 class="font-bold text-sm text-google-textPrimary dark:text-google-textPrimaryDark">ملفاتك بأمان على جهازك</h4>
+                        <p class="text-xs text-google-textSecondary dark:text-google-textSecondaryDark leading-relaxed">كل شي بتخزن محلياً عندك، ما حدا غيرك بشوف ملفاتك وما بتحتاج نت لتفتحها.</p>
+                    </div>
+                </div>
+
+                <div class="pt-4 flex items-center justify-center gap-2 text-xs text-google-textSecondary dark:text-google-textSecondaryDark">
+                    <span>تطوير: <strong class="text-google-textPrimary dark:text-google-textPrimaryDark font-bold">محمد (Mohammad)</strong></span>
+                    <span>•</span>
+                    <button onclick="openDeveloperModal()" class="text-google-blue dark:text-google-blueDark font-bold hover:underline inline-flex items-center gap-1">
+                        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                        <span>احكي معي</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Dashboard View -->
+            <section id="dashboardView" class="hidden p-6 md:p-8 space-y-8 flex-1">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-google-outline dark:border-google-outlineDark">
+                    <div>
+                        <h2 class="text-2xl font-extrabold text-google-textPrimary dark:text-google-textPrimaryDark tracking-tight">موادك الدراسية</h2>
+                        <p class="text-xs text-google-textSecondary dark:text-google-textSecondaryDark mt-1">المجلدات اللي ضفتها</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="openNewFolderModal()" class="flex items-center gap-2 bg-google-blue text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-m3-1 hover:brightness-110 smooth-m3">
+                            <i data-lucide="folder-plus" class="w-4 h-4"></i>
+                            <span>إضافة مادة جديدة</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-sm font-bold text-google-textSecondary dark:text-google-textSecondaryDark flex items-center gap-2">
+                            <i data-lucide="folder" class="w-4 h-4 text-google-blue dark:text-google-blueDark"></i>
+                            <span>المواد الحالية</span>
+                        </h3>
+                    </div>
+                    <div id="foldersGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4"></div>
+                </div>
+
+                <div class="space-y-4 pt-4">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <h3 class="text-sm font-bold text-google-textSecondary dark:text-google-textSecondaryDark flex items-center gap-2">
+                            <i data-lucide="file-text" class="w-4 h-4 text-google-blue dark:text-google-blueDark"></i>
+                            <span>آخر الملفات المرفوعة</span>
+                        </h3>
+                        <div class="flex items-center gap-1.5 overflow-x-auto pb-1" id="fileFilterChips">
+                            <button onclick="filterFiles('all')" class="chip-filter active px-3 py-1 rounded-full text-xs font-bold bg-google-blueContainer dark:bg-google-blueContainerDark text-google-blue dark:text-google-blueDark smooth-m3">الكل</button>
+                            <button onclick="filterFiles('pptx')" class="chip-filter px-3 py-1 rounded-full text-xs font-medium text-google-textSecondary dark:text-google-textSecondaryDark hover:bg-google-containerHigh dark:hover:bg-google-containerHighDark smooth-m3">بوربوينت PPTX</button>
+                            <button onclick="filterFiles('docx')" class="chip-filter px-3 py-1 rounded-full text-xs font-medium text-google-textSecondary dark:text-google-textSecondaryDark hover:bg-google-containerHigh dark:hover:bg-google-containerHighDark smooth-m3">وورد DOCX</button>
+                            <button onclick="filterFiles('pdf')" class="chip-filter px-3 py-1 rounded-full text-xs font-medium text-google-textSecondary dark:text-google-textSecondaryDark hover:bg-google-containerHigh dark:hover:bg-google-containerHighDark smooth-m3">PDF</button>
+                            <button onclick="filterFiles('excel')" class="chip-filter px-3 py-1 rounded-full text-xs font-medium text-google-textSecondary dark:text-google-textSecondaryDark hover:bg-google-containerHigh dark:hover:bg-google-containerHighDark smooth-m3">إكسل</button>
+                        </div>
+                    </div>
+
+                    <div id="filesContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4"></div>
+
+                    <div id="noFilesNotice" class="hidden text-center py-12 border-2 border-dashed border-google-outline dark:border-google-outlineDark rounded-3xl p-6">
+                        <div class="w-14 h-14 rounded-2xl bg-google-containerHigh dark:bg-google-containerHighDark flex items-center justify-center mx-auto mb-3 text-google-textSecondary">
+                            <i data-lucide="inbox" class="w-6 h-6"></i>
+                        </div>
+                        <h4 class="font-bold text-sm text-google-textPrimary dark:text-google-textPrimaryDark">لسه ما رفعت ملفات</h4>
+                        <p class="text-xs text-google-textSecondary dark:text-google-textSecondaryDark mt-1">اضغط على أي مادة فوق وارفع ملفاتك وسلايداتك فيها!</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Subject Folder View -->
+            <section id="subjectFolderView" class="hidden p-6 md:p-8 space-y-6 flex-1">
+                <div id="subjectBanner" class="p-6 rounded-3xl border border-google-outline dark:border-google-outlineDark bg-google-container dark:bg-google-containerDark shadow-m3-1 flex flex-col md:flex-row md:items-center justify-between gap-4 relative overflow-hidden">
+                    <div class="absolute top-0 left-0 right-0 h-1 google-bar"></div>
+                    <div class="flex items-center gap-4">
+                        <div id="subjectBannerIcon" class="w-14 h-14 rounded-2xl flex items-center justify-center text-white text-2xl font-bold shadow-sm">
+                            <i data-lucide="book-open" class="w-7 h-7"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span id="subjectBannerCode" class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-google-containerHigh dark:bg-google-containerHighDark text-google-textSecondary dark:text-google-textSecondaryDark">CS101</span>
+                                <span id="subjectFilesCountBadge" class="text-xs text-google-textSecondary">0 ملف</span>
+                            </div>
+                            <h2 id="subjectBannerTitle" class="text-2xl font-extrabold text-google-textPrimary dark:text-google-textPrimaryDark mt-1">اسم المادة</h2>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <label for="folderFileInput" class="cursor-pointer flex items-center gap-2 bg-google-blue text-white px-4 py-2.5 rounded-xl text-xs font-bold hover:brightness-110 smooth-m3 shadow-sm">
+                            <i data-lucide="upload" class="w-4 h-4"></i>
+                            <span>رفع ملف لهالمادة</span>
+                        </label>
+                        <input type="file" id="folderFileInput" class="hidden" accept=".pptx,.docx,.xlsx,.csv,.pdf,.zip,.js,.py,.cpp,.html,.css,.txt,.json,.md,image/*" multiple>
+                        
+                        <button onclick="editCurrentSubject()" class="p-2.5 rounded-xl border border-google-outline dark:border-google-outlineDark hover:bg-google-containerHigh dark:hover:bg-google-containerHighDark text-google-textSecondary transition" title="تعديل المادة">
+                            <i data-lucide="edit-3" class="w-4 h-4"></i>
+                        </button>
+                        <button onclick="deleteCurrentSubject()" class="p-2.5 rounded-xl border border-red-500/30 text-red-400 hover:bg-red-500/10 transition" title="حذف المادة">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                        <button onclick="navigateHome()" class="p-2.5 rounded-xl border border-google-outline dark:border-google-outlineDark hover:bg-google-containerHigh dark:hover:bg-google-containerHighDark text-google-textSecondary transition" title="رجوع">
+                            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="subjectDropZone" class="border-2 border-dashed border-google-outline dark:border-google-outlineDark hover:border-google-blue dark:hover:border-google-blueDark rounded-2xl p-6 text-center smooth-m3 cursor-pointer" onclick="document.getElementById('folderFileInput').click()">
+                    <div class="flex flex-col items-center justify-center gap-2">
+                        <i data-lucide="cloud-upload" class="w-8 h-8 text-google-blue dark:text-google-blueDark"></i>
+                        <span class="text-sm font-bold text-google-textPrimary dark:text-google-textPrimaryDark">اسحب ملفاتك وسلايداتك وزتها هون</span>
+                        <span class="text-xs text-google-textSecondary dark:text-google-textSecondaryDark">أو اضغط عشان تختار من جهازك، وكل شي بنحفظ تلقائياً بهالمادة</span>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <h3 class="text-sm font-bold text-google-textSecondary dark:text-google-textSecondaryDark">ملفات المادة</h3>
+                    <div id="subjectFilesGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4"></div>
+                    <div id="emptySubjectNotice" class="hidden text-center py-10 text-google-textSecondary text-xs">
+                        لسه ما في ملفات بهالمادة، ارفع أول سلايدات إلها!
+                    </div>
+                </div>
+            </section>
+
+            <!-- Floating Exit Fullscreen Button -->
+            <button id="floatingExitFullscreenBtn" onclick="toggleViewerFullscreen()" class="hidden fixed top-3 left-3 z-[100000] px-3.5 py-2 rounded-full bg-black/85 hover:bg-black text-white text-xs font-bold backdrop-blur-md shadow-2xl border border-white/20 items-center gap-2 transition active:scale-95 cursor-pointer">
+                <i data-lucide="minimize-2" class="w-4 h-4 text-google-yellow"></i>
+                <span>تصغير الشاشة (Esc)</span>
+            </button>
+
+            <!-- File Launch Animated Transition Overlay -->
+            <div id="fileLaunchOverlay" class="fixed inset-0 bg-black/65 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+                <div class="w-full max-w-sm sm:max-w-md bg-google-container dark:bg-google-containerDark rounded-3xl p-6 sm:p-8 border border-google-outline dark:border-google-outlineDark shadow-m3-3 flex flex-col items-center text-center space-y-6 relative overflow-hidden smooth-m3">
+                    <div class="absolute top-0 left-0 right-0 h-[4.5px] google-bar-alive"></div>
+                    
+                    <div class="relative mt-2">
+                        <div id="launchFilePulse" class="absolute -inset-3 rounded-3xl opacity-30 animate-ping"></div>
+                        <div id="launchFileIconContainer" class="w-20 h-20 rounded-2xl flex items-center justify-center text-white text-3xl font-extrabold shadow-m3-2 relative z-10 transition-transform duration-500 scale-100">
+                            <i id="launchFileLucideIcon" data-lucide="file-text" class="w-10 h-10"></i>
+                        </div>
+                    </div>
+
+                    <div class="space-y-1.5 max-w-xs px-2">
+                        <span id="launchFileBadge" class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-google-containerHigh dark:bg-google-containerHighDark text-google-textSecondary font-mono uppercase tracking-wider">PPTX</span>
+                        <h3 id="launchFileName" class="text-base font-extrabold text-google-textPrimary dark:text-google-textPrimaryDark truncate">اسم الملف</h3>
+                    </div>
+
+                    <div class="w-full space-y-3">
+                        <div class="w-full h-2 rounded-full bg-google-containerHigh dark:bg-google-containerHighDark overflow-hidden p-0.5 border border-google-outline/50 dark:border-google-outlineDark/50">
+                            <div id="launchProgressBar" class="h-full rounded-full google-bar-alive transition-all duration-500" style="width: 20%;"></div>
+                        </div>
+                        
+                        <div class="min-h-[44px] flex items-center justify-center px-2">
+                            <p id="launchPhaseText" class="text-xs sm:text-sm font-bold text-google-blue dark:text-google-blueDark transition-opacity duration-300 leading-relaxed">
+                                ثواني وبنجهّزلك الملف.. خذلك رشفة قهوة أو شاي ☕
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-1.5 text-[11px] text-google-textSecondary dark:text-google-textSecondaryDark">
+                        <span class="w-2 h-2 rounded-full bg-google-green animate-pulse"></span>
+                        <span>بأعلى دقة، وبدون ما يضيع أي خط أو تنسيق</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Viewer View -->
+            <section id="viewerContainer" class="hidden flex-1 flex flex-col bg-google-surface dark:bg-google-surfaceDark overflow-hidden relative">
+                <div class="min-h-14 py-2 px-3 sm:px-4 border-b border-google-outline dark:border-google-outlineDark bg-google-container dark:bg-google-containerDark flex flex-wrap items-center justify-between gap-2.5 shrink-0 z-10 relative">
+                    <div class="absolute bottom-0 left-0 right-0 h-[2.5px] google-bar-alive"></div>
+                    
+                    <div class="flex items-center gap-2 sm:gap-3 min-w-0">
+                        <button onclick="closeViewer()" class="flex items-center gap-1 px-2.5 py-1.5 rounded-xl border border-google-outline dark:border-google-outlineDark hover:bg-google-containerHigh dark:hover:bg-google-containerHighDark text-xs font-bold text-google-textSecondary dark:text-google-textSecondaryDark transition shrink-0">
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                            <span class="hidden xs:inline">رجوع</span>
+                        </button>
+                        <div class="flex items-center gap-2 min-w-0">
+                            <span id="viewerFileIcon" class="w-7 h-7 rounded-lg flex items-center justify-center text-white text-xs font-bold shrink-0 shadow-sm"></span>
+                            <span id="viewerFileName" class="text-xs sm:text-sm font-bold text-google-textPrimary dark:text-google-textPrimaryDark truncate max-w-[130px] sm:max-w-xs md:max-w-md">اسم الملف</span>
+                        </div>
+                    </div>
+
+                    <div id="pptxModeSwitcher" class="hidden items-center bg-google-containerHigh dark:bg-google-containerHighDark p-0.5 rounded-xl border border-google-outline dark:border-google-outlineDark">
+                        <button id="btnVisualMode" onclick="switchPptxMode('visual')" class="px-2.5 sm:px-3 py-1 rounded-lg text-xs font-bold bg-google-blue text-white transition flex items-center gap-1.5 shadow-sm">
+                            <i data-lucide="monitor-play" class="w-3.5 h-3.5"></i>
+                            <span class="hidden sm:inline">عرض السلايدات الأصلي</span>
+                            <span class="sm:hidden">سلايدات</span>
+                        </button>
+                        <button id="btnReaderMode" onclick="switchPptxMode('reader')" class="px-2.5 sm:px-3 py-1 rounded-lg text-xs font-bold text-google-textSecondary dark:text-google-textSecondaryDark hover:text-white transition flex items-center gap-1.5">
+                            <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+                            <span class="hidden sm:inline">وضع نسخ النصوص</span>
+                            <span class="sm:hidden">نصوص</span>
+                        </button>
+                    </div>
+
+                    <div class="flex items-center gap-1.5 sm:gap-2">
+                        <div id="zoomControls" class="hidden items-center gap-1.5 bg-google-containerHigh dark:bg-google-containerHighDark px-2 py-1 rounded-xl border border-google-outline dark:border-google-outlineDark">
+                            <i data-lucide="zoom-in" class="w-3.5 h-3.5 text-google-textSecondary"></i>
+                            <input type="range" id="zoomSlider" min="50" max="150" value="100" class="w-16 sm:w-20 accent-google-blue cursor-pointer">
+                            <span id="zoomValue" class="text-[10px] sm:text-[11px] font-mono text-google-textSecondary w-7 sm:w-8">100%</span>
+                        </div>
+
+                        <!-- Fullscreen Toggle Button -->
+                        <button id="viewerFullscreenBtn" onclick="toggleViewerFullscreen()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-google-outline dark:border-google-outlineDark bg-google-containerHigh dark:bg-google-containerHighDark hover:bg-google-blue hover:text-white text-xs font-bold text-google-textPrimary dark:text-google-textPrimaryDark transition shadow-sm active:scale-95" title="ملء الشاشة">
+                            <i id="fullscreenIcon" data-lucide="maximize-2" class="w-4 h-4 text-google-blue dark:text-google-blueDark"></i>
+                            <span id="fullscreenText" class="hidden sm:inline">ملء الشاشة</span>
+                        </button>
+
+                        <button id="viewerDownloadBtn" class="p-2 rounded-xl border border-google-outline dark:border-google-outlineDark hover:bg-google-containerHigh dark:hover:bg-google-containerHighDark text-google-textSecondary transition" title="تحميل الملف">
+                            <i data-lucide="download" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6 select-text relative" id="viewerRenderArea">
+                    <div id="viewerLoading" class="hidden flex-col items-center justify-center py-24">
+                        <div class="w-10 h-10 border-4 border-google-blue border-t-transparent rounded-full animate-spin mb-3"></div>
+                        <p class="text-xs font-bold text-google-textSecondary">ثواني عم نجهّزلك الملف...</p>
+                    </div>
+
+                    <div id="pptxVisualMount" class="hidden"></div>
+                    <div id="pptxReaderMount" class="hidden max-w-4xl mx-auto space-y-4"></div>
+                    <div id="generalMount" class="hidden"></div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Notes Drawer Backdrop on Mobile -->
+        <div id="notesBackdrop" onclick="toggleNotesDrawer()" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-30 hidden md:hidden transition-opacity"></div>
+
+        <!-- Notes Drawer -->
+        <aside id="notesDrawer" class="fixed md:static inset-y-0 left-0 z-40 w-full sm:w-80 max-w-[90vw] bg-google-container dark:bg-google-containerDark border-r border-google-outline dark:border-google-outlineDark p-4 flex flex-col justify-between shrink-0 smooth-m3 shadow-m3-2 hidden relative overflow-hidden">
+            <div class="absolute top-0 left-0 right-0 h-1 google-bar"></div>
+            <div class="flex items-center justify-between pb-3 border-b border-google-outline dark:border-google-outlineDark">
+                <div class="flex items-center gap-2 text-google-textPrimary dark:text-google-textPrimaryDark font-bold text-sm">
+                    <i data-lucide="notebook-pen" class="w-4 h-4 text-google-yellow"></i>
+                    <span>ملاحظاتي</span>
+                </div>
+                <div class="flex items-center gap-1">
+                    <button onclick="exportNotes()" class="p-1.5 rounded-lg hover:bg-google-containerHigh dark:hover:bg-google-containerHighDark text-google-textSecondary" title="تنزيل الملاحظات">
+                        <i data-lucide="download" class="w-4 h-4"></i>
+                    </button>
+                    <button onclick="toggleNotesDrawer()" class="p-1.5 rounded-lg hover:bg-google-containerHigh dark:hover:bg-google-containerHighDark text-google-textSecondary" title="إغلاق">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex-1 my-3 flex flex-col">
+                <textarea id="globalNotesInput" placeholder="اكتب ملاحظاتك وتلخيصاتك هون.. بنحفظ تلقائياً" 
+                    class="w-full flex-1 bg-google-containerHigh dark:bg-google-containerHighDark rounded-2xl p-3.5 text-xs text-google-textPrimary dark:text-google-textPrimaryDark focus:outline-none focus:ring-1 focus:ring-google-blue border border-transparent resize-none leading-relaxed select-text"></textarea>
+            </div>
+
+            <div class="text-[10px] text-google-textSecondary flex items-center justify-between">
+                <span>محفوظ تلقائياً</span>
+                <span id="notesSaveStatus" class="text-green-500 font-bold">✓ تمام</span>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Subject Modal -->
+    <div id="subjectModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="w-full max-w-md bg-google-container dark:bg-google-containerDark rounded-3xl p-6 border border-google-outline dark:border-google-outlineDark shadow-m3-3 space-y-5 smooth-m3 relative overflow-hidden">
+            <div class="absolute top-0 left-0 right-0 h-1.5 google-bar-alive"></div>
+            <div class="flex items-center justify-between">
+                <h3 id="modalSubjectTitle" class="text-lg font-bold text-google-textPrimary dark:text-google-textPrimaryDark">ضيف مادة جديدة</h3>
+                <button type="button" onclick="closeSubjectModal()" class="p-1.5 rounded-full hover:bg-google-containerHigh dark:hover:bg-google-containerHighDark text-google-textSecondary">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <form id="subjectForm" onsubmit="saveSubject(event)" class="space-y-4">
+                <input type="hidden" id="modalSubjectId">
+                <div>
+                    <label class="block text-xs font-bold text-google-textSecondary mb-1.5">اسم المادة</label>
+                    <input type="text" id="modalSubjectName" required placeholder="مثلاً: فيزياء، برمجة 1، تفاضل وتكامل..." 
+                        class="w-full h-11 px-3.5 rounded-xl bg-google-containerHigh dark:bg-google-containerHighDark border border-google-outline dark:border-google-outlineDark text-sm text-google-textPrimary dark:text-google-textPrimaryDark focus:outline-none focus:border-google-blue">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-google-textSecondary mb-1.5">كود المادة (اختياري)</label>
+                    <input type="text" id="modalSubjectCode" placeholder="مثلاً: CS101 أو MATH201" 
+                        class="w-full h-11 px-3.5 rounded-xl bg-google-containerHigh dark:bg-google-containerHighDark border border-google-outline dark:border-google-outlineDark text-sm text-google-textPrimary dark:text-google-textPrimaryDark focus:outline-none focus:border-google-blue">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-google-textSecondary mb-2">نقّي لون للمادة</label>
+                    <div class="flex items-center gap-3" id="colorPickerContainer">
+                        <button type="button" data-color="#1a73e8" onclick="selectColor('#1a73e8')" class="w-8 h-8 rounded-full bg-[#1a73e8] border-2 border-white shadow-sm color-choice active transition-transform hover:scale-105"></button>
+                        <button type="button" data-color="#ea4335" onclick="selectColor('#ea4335')" class="w-8 h-8 rounded-full bg-[#ea4335] border-2 border-transparent shadow-sm color-choice transition-transform hover:scale-105"></button>
+                        <button type="button" data-color="#34a853" onclick="selectColor('#34a853')" class="w-8 h-8 rounded-full bg-[#34a853] border-2 border-transparent shadow-sm color-choice transition-transform hover:scale-105"></button>
+                        <button type="button" data-color="#f9ab00" onclick="selectColor('#f9ab00')" class="w-8 h-8 rounded-full bg-[#f9ab00] border-2 border-transparent shadow-sm color-choice transition-transform hover:scale-105"></button>
+                        <button type="button" data-color="#9334e6" onclick="selectColor('#9334e6')" class="w-8 h-8 rounded-full bg-[#9334e6] border-2 border-transparent shadow-sm color-choice transition-transform hover:scale-105"></button>
+                        <button type="button" data-color="#0097a7" onclick="selectColor('#0097a7')" class="w-8 h-8 rounded-full bg-[#0097a7] border-2 border-transparent shadow-sm color-choice transition-transform hover:scale-105"></button>
+                    </div>
+                    <input type="hidden" id="modalSubjectColor" value="#1a73e8">
+                </div>
+
+                <div class="flex items-center justify-end gap-2 pt-3 border-t border-google-outline dark:border-google-outlineDark">
+                    <button type="button" onclick="closeSubjectModal()" class="px-4 py-2 rounded-xl text-xs font-bold text-google-textSecondary hover:bg-google-containerHigh dark:hover:bg-google-containerHighDark transition">إلغاء</button>
+                    <button type="submit" class="px-5 py-2.5 rounded-xl text-xs font-bold bg-google-blue text-white hover:brightness-110 shadow-sm transition">احفظ المادة</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Developer Modal -->
+    <div id="developerModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden" onclick="if(event.target === this) closeDeveloperModal()">
+        <div class="w-full max-w-md bg-google-container dark:bg-google-containerDark rounded-3xl p-6 md:p-7 border border-google-outline dark:border-google-outlineDark shadow-m3-3 space-y-6 smooth-m3 relative overflow-hidden">
+            <div class="absolute top-0 left-0 right-0 h-1.5 google-bar-alive"></div>
+            
+            <button onclick="closeDeveloperModal()" class="absolute top-4 left-4 p-2 rounded-full hover:bg-google-containerHigh dark:hover:bg-google-containerHighDark text-google-textSecondary transition" title="إغلاق">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <div class="flex flex-col items-center text-center space-y-3 pt-2">
+                <div class="relative">
+                    <div class="w-20 h-20 rounded-3xl bg-gradient-to-tr from-google-blue via-indigo-600 to-purple-600 flex items-center justify-center text-white text-3xl font-extrabold shadow-m3-2">
+                        M
+                    </div>
+                    <div class="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-google-container dark:bg-google-containerDark flex items-center justify-center shadow-sm">
+                        <span class="w-4 h-4 rounded-full bg-google-green flex items-center justify-center text-[10px] text-white">
+                            <i data-lucide="check" class="w-3 h-3"></i>
+                        </span>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="flex items-center justify-center gap-2">
+                        <h3 class="text-xl font-extrabold text-google-textPrimary dark:text-google-textPrimaryDark">محمد | Mohammad</h3>
+                        <span class="text-xs bg-google-blueContainer dark:bg-google-blueContainerDark text-google-blue dark:text-google-blueDark px-2.5 py-0.5 rounded-full font-bold">مطور سَلِس</span>
+                    </div>
+                    <p class="text-xs text-google-textSecondary dark:text-google-textSecondaryDark font-medium mt-1">أهلاً فيك!</p>
+                </div>
+                
+                <p class="text-xs text-google-textSecondary dark:text-google-textSecondaryDark max-w-xs leading-relaxed">
+                    معك محمد، طوّرت منصة سَلِس حتى نسهل دراستنا الجامعية ونرتب ملفاتنا ومحاضراتنا ونفتحها بكل سهولة وبأعلى جودة.
+                </p>
+            </div>
+
+            <div class="space-y-3">
+                <a href="https://wa.me/970594698867" target="_blank" rel="noopener noreferrer" 
+                    class="flex items-center justify-between p-4 rounded-2xl bg-google-containerHigh dark:bg-google-containerHighDark border border-google-outline dark:border-google-outlineDark hover:border-green-500/50 hover:bg-green-500/5 smooth-m3 group cursor-pointer">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-11 h-11 rounded-2xl bg-green-500 text-white flex items-center justify-center shrink-0 shadow-sm group-hover:scale-105 transition">
+                            <i data-lucide="message-circle" class="w-6 h-6"></i>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-xs font-bold text-google-textPrimary dark:text-google-textPrimaryDark block">تواصل معي واتساب</span>
+                            <span class="text-xs text-google-textSecondary dark:text-google-textSecondaryDark font-mono font-medium" dir="ltr">+970 594 698 867</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-bold text-green-600 dark:text-green-400 bg-green-500/10 px-3 py-1 rounded-full">شات</span>
+                        <i data-lucide="arrow-left" class="w-4 h-4 text-google-textSecondary group-hover:text-green-500 transition"></i>
+                    </div>
+                </a>
+
+                <a href="https://instagram.com/_2mohammad_2008" target="_blank" rel="noopener noreferrer" 
+                    class="flex items-center justify-between p-4 rounded-2xl bg-google-containerHigh dark:bg-google-containerHighDark border border-google-outline dark:border-google-outlineDark hover:border-pink-500/50 hover:bg-pink-500/5 smooth-m3 group cursor-pointer">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-yellow-500 via-pink-500 to-purple-600 text-white flex items-center justify-center shrink-0 shadow-sm group-hover:scale-105 transition">
+                            <i data-lucide="instagram" class="w-6 h-6"></i>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-xs font-bold text-google-textPrimary dark:text-google-textPrimaryDark block">تابعني على إنستغرام</span>
+                            <span class="text-xs text-google-textSecondary dark:text-google-textSecondaryDark font-mono font-medium" dir="ltr">@_2mohammad_2008</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-bold text-pink-600 dark:text-pink-400 bg-pink-500/10 px-3 py-1 rounded-full">متابعة</span>
+                        <i data-lucide="arrow-left" class="w-4 h-4 text-google-textSecondary group-hover:text-pink-500 transition"></i>
+                    </div>
+                </a>
+            </div>
+
+            <div class="pt-3 border-t border-google-outline dark:border-google-outlineDark text-center">
+                <p class="text-[11px] text-google-textSecondary dark:text-google-textSecondaryDark leading-relaxed">
+                    إذا عندك أي فكرة حابب نضيفها، أو واجهتك أي مشكلة، تواصل معي بأي وقت وحياك الله! ✨
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <input type="file" id="directFileInput" class="hidden" accept=".pptx,.docx,.xlsx,.csv,.pdf,.zip,.js,.py,.cpp,.html,.css,.txt,.json,.md,image/*">
+
+    <script>
+        const DB_NAME = 'SalisAcademicDB_v3';
+        const DB_VERSION = 1;
+        let db = null;
+        let storageMode = 'idb';
+
+        function initDB() {
+            return new Promise((resolve) => {
+                if (!window.indexedDB) {
+                    storageMode = 'local';
+                    return resolve(null);
+                }
+                try {
+                    const request = indexedDB.open(DB_NAME, DB_VERSION);
+                    request.onupgradeneeded = (e) => {
+                        const database = e.target.result;
+                        if (!database.objectStoreNames.contains('subjects')) {
+                            const subjectStore = database.createObjectStore('subjects', { keyPath: 'id' });
+                            subjectStore.createIndex('name', 'name', { unique: false });
+                        }
+                        if (!database.objectStoreNames.contains('files')) {
+                            const fileStore = database.createObjectStore('files', { keyPath: 'id' });
+                            fileStore.createIndex('subjectId', 'subjectId', { unique: false });
+                            fileStore.createIndex('createdAt', 'createdAt', { unique: false });
+                        }
+                    };
+                    request.onsuccess = (e) => {
+                        db = e.target.result;
+                        storageMode = 'idb';
+                        resolve(db);
+                    };
+                    request.onerror = () => {
+                        storageMode = 'local';
+                        resolve(null);
+                    };
+                } catch {
+                    storageMode = 'local';
+                    resolve(null);
+                }
+            });
+        }
+
+        async function dbGetAll(storeName) {
+            if (storageMode === 'local' || !db) {
+                try {
+                    const raw = localStorage.getItem('salis_' + storeName);
+                    return raw ? JSON.parse(raw) : [];
+                } catch {
+                    return [];
+                }
+            }
+            return new Promise((resolve) => {
+                try {
+                    const tx = db.transaction(storeName, 'readonly');
+                    const store = tx.objectStore(storeName);
+                    const req = store.getAll();
+                    req.onsuccess = () => resolve(req.result || []);
+                    req.onerror = () => resolve([]);
+                } catch {
+                    resolve([]);
+                }
+            });
+        }
+
+        async function dbPut(storeName, item) {
+            if (storageMode === 'local' || !db) {
+                try {
+                    const raw = localStorage.getItem('salis_' + storeName);
+                    const list = raw ? JSON.parse(raw) : [];
+                    const idx = list.findIndex(x => x.id === item.id);
+                    if (idx >= 0) list[idx] = item;
+                    else list.push(item);
+                    localStorage.setItem('salis_' + storeName, JSON.stringify(list));
+                    return item.id;
+                } catch (e) {
+                    console.error('Save failed:', e);
+                    return item.id;
+                }
+            }
+            return new Promise((resolve, reject) => {
+                try {
+                    const tx = db.transaction(storeName, 'readwrite');
+                    const store = tx.objectStore(storeName);
+                    const req = store.put(item);
+                    req.onsuccess = () => resolve(req.result);
+                    req.onerror = () => reject(req.error);
+                } catch (err) {
+                    reject(err);
+                }
+            });
+        }
+
+        async function dbDelete(storeName, id) {
+            if (storageMode === 'local' || !db) {
+                try {
+                    const raw = localStorage.getItem('salis_' + storeName);
+                    let list = raw ? JSON.parse(raw) : [];
+                    list = list.filter(x => x.id !== id);
+                    localStorage.setItem('salis_' + storeName, JSON.stringify(list));
+                } catch {}
+                return;
+            }
+            return new Promise((resolve) => {
+                try {
+                    const tx = db.transaction(storeName, 'readwrite');
+                    const store = tx.objectStore(storeName);
+                    const req = store.delete(id);
+                    req.onsuccess = () => resolve();
+                    req.onerror = () => resolve();
+                } catch {
+                    resolve();
+                }
+            });
+        }
+
+        async function dbGetFilesBySubject(subjectId) {
+            if (storageMode === 'local' || !db) {
+                const files = await dbGetAll('files');
+                return files.filter(f => f.subjectId === subjectId);
+            }
+            return new Promise((resolve) => {
+                try {
+                    const tx = db.transaction('files', 'readonly');
+                    const store = tx.objectStore('files');
+                    const index = store.index('subjectId');
+                    const req = index.getAll(subjectId);
+                    req.onsuccess = () => resolve(req.result || []);
+                    req.onerror = () => resolve([]);
+                } catch {
+                    resolve([]);
+                }
+            });
+        }
+
+        let currentSubjectId = null;
+        let allSubjects = [];
+        let allFiles = [];
+        let currentActiveFile = null;
+        let activeFilter = 'all';
+
+        async function loadAppData() {
+            if (!localStorage.getItem('salis_chosen_logo')) {
+                localStorage.setItem('salis_chosen_logo', 'assets/salis_logo_1.jpg');
+            }
+            const savedLogo = localStorage.getItem('salis_chosen_logo') || 'assets/salis_logo_1.jpg';
+            const navLogo = document.getElementById('appNavbarLogo');
+            const heroLogo = document.getElementById('welcomeHeroLogo');
+            if (navLogo) navLogo.src = savedLogo;
+            if (heroLogo) heroLogo.src = savedLogo;
+
+            allSubjects = await dbGetAll('subjects');
+            allFiles = await dbGetAll('files');
+
+            renderSidebarSubjects();
+
+            if (allSubjects.length === 0) {
+                showWelcomeView();
+            } else {
+                if (currentSubjectId) {
+                    openSubjectFolder(currentSubjectId);
+                } else {
+                    showDashboardView();
+                }
+            }
+            updateStorageStats();
+            lucide.createIcons();
+        }
+
+        function showWelcomeView() {
+            currentSubjectId = null;
+            document.getElementById('welcomeView').classList.remove('hidden');
+            document.getElementById('dashboardView').classList.add('hidden');
+            document.getElementById('subjectFolderView').classList.add('hidden');
+            document.getElementById('viewerContainer').classList.add('hidden');
+            
+            document.getElementById('navAllBtn').className = "w-full flex items-center justify-between px-3.5 py-2.5 rounded-full text-sm font-semibold bg-google-blueContainer dark:bg-google-blueContainerDark text-google-blue dark:text-google-blueDark smooth-m3";
+            lucide.createIcons();
+        }
+
+        function showDashboardView() {
+            currentSubjectId = null;
+            if (allSubjects.length === 0) {
+                showWelcomeView();
+                return;
+            }
+            document.getElementById('welcomeView').classList.add('hidden');
+            document.getElementById('dashboardView').classList.remove('hidden');
+            document.getElementById('subjectFolderView').classList.add('hidden');
+            document.getElementById('viewerContainer').classList.add('hidden');
+            
+            document.getElementById('navAllBtn').className = "w-full flex items-center justify-between px-3.5 py-2.5 rounded-full text-sm font-semibold bg-google-blueContainer dark:bg-google-blueContainerDark text-google-blue dark:text-google-blueDark smooth-m3";
+            renderDashboard();
+            lucide.createIcons();
+        }
+
+        function navigateHome() {
+            closeSidebarMobile();
+            if (allSubjects.length === 0) {
+                showWelcomeView();
+            } else {
+                showDashboardView();
+            }
+        }
+
+        async function openSubjectFolder(subjectId) {
+            closeSidebarMobile();
+            currentSubjectId = subjectId;
+            const subject = allSubjects.find(s => s.id === subjectId);
+            if (!subject) return;
+
+            document.getElementById('welcomeView').classList.add('hidden');
+            document.getElementById('dashboardView').classList.add('hidden');
+            document.getElementById('subjectFolderView').classList.remove('hidden');
+            document.getElementById('viewerContainer').classList.add('hidden');
+
+            document.getElementById('subjectBannerTitle').textContent = subject.name;
+            document.getElementById('subjectBannerCode').textContent = subject.code || 'مادة';
+            const bannerIcon = document.getElementById('subjectBannerIcon');
+            bannerIcon.style.backgroundColor = subject.color || '#1a73e8';
+
+            const files = await dbGetFilesBySubject(subjectId);
+            document.getElementById('subjectFilesCountBadge').textContent = `${files.length} ملف`;
+
+            renderSubjectFiles(files);
+            lucide.createIcons();
+        }
+
+        function renderSidebarSubjects() {
+            const list = document.getElementById('sidebarSubjectsList');
+            document.getElementById('allSubjectsCountBadge').textContent = allSubjects.length;
+            list.innerHTML = '';
+
+            if (allSubjects.length === 0) {
+                list.innerHTML = `
+                    <div class="px-3 py-3 text-center border border-dashed border-google-outline dark:border-google-outlineDark rounded-2xl">
+                        <p class="text-[11px] text-google-textSecondary dark:text-google-textSecondaryDark font-medium">لسه ما ضفت مواد</p>
+                        <button onclick="openNewFolderModal()" class="mt-1.5 text-xs text-google-blue dark:text-google-blueDark font-bold hover:underline">+ ضيف مادة</button>
+                    </div>
+                `;
+                return;
+            }
+
+            allSubjects.forEach(s => {
+                const btn = document.createElement('button');
+                btn.className = "w-full flex items-center justify-between px-3 py-2 rounded-full text-xs font-medium text-google-textSecondary dark:text-google-textSecondaryDark hover:bg-google-containerHigh dark:hover:bg-google-containerHighDark smooth-m3";
+                btn.onclick = () => openSubjectFolder(s.id);
+                btn.innerHTML = `
+                    <div class="flex items-center gap-2 truncate">
+                        <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color: ${s.color || '#1a73e8'}"></span>
+                        <span class="truncate">${s.name}</span>
+                    </div>
+                    <span class="text-[10px] text-google-textSecondary font-mono">${s.code || ''}</span>
+                `;
+                list.appendChild(btn);
+            });
+        }
+
+        function renderDashboard() {
+            const grid = document.getElementById('foldersGrid');
+            grid.innerHTML = '';
+
+            allSubjects.forEach(subject => {
+                const count = allFiles.filter(f => f.subjectId === subject.id).length;
+                const card = document.createElement('div');
+                card.className = "bg-google-container dark:bg-google-containerDark border border-google-outline dark:border-google-outlineDark hover:border-google-blue dark:hover:border-google-blueDark rounded-2xl p-4 cursor-pointer smooth-m3 shadow-sm hover:shadow-m3-2 flex flex-col justify-between group";
+                card.onclick = () => openSubjectFolder(subject.id);
+                card.innerHTML = `
+                    <div class="flex items-start justify-between">
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center text-white" style="background-color: ${subject.color || '#1a73e8'}">
+                            <i data-lucide="folder" class="w-5 h-5"></i>
+                        </div>
+                        <span class="text-[11px] font-bold px-2 py-0.5 rounded-md bg-google-containerHigh dark:bg-google-containerHighDark text-google-textSecondary font-mono">${subject.code || 'CS'}</span>
+                    </div>
+                    <div class="mt-4">
+                        <h4 class="font-bold text-sm text-google-textPrimary dark:text-google-textPrimaryDark truncate group-hover:text-google-blue dark:group-hover:text-google-blueDark smooth-m3">${subject.name}</h4>
+                        <p class="text-xs text-google-textSecondary dark:text-google-textSecondaryDark mt-0.5">${count} ملف</p>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+
+            renderFilesGrid(allFiles);
+        }
+
+        function renderFilesGrid(files) {
+            const container = document.getElementById('filesContainer');
+            const notice = document.getElementById('noFilesNotice');
+            container.innerHTML = '';
+
+            const filtered = activeFilter === 'all' ? files : files.filter(f => {
+                const ext = f.name.split('.').pop().toLowerCase();
+                if (activeFilter === 'pptx') return ext === 'pptx';
+                if (activeFilter === 'docx') return ext === 'docx';
+                if (activeFilter === 'pdf') return ext === 'pdf';
+                if (activeFilter === 'excel') return ['xlsx', 'xls', 'csv'].includes(ext);
+                return true;
+            });
+
+            if (filtered.length === 0) {
+                notice.classList.remove('hidden');
+            } else {
+                notice.classList.add('hidden');
+                filtered.forEach(file => {
+                    const card = createFileCard(file);
+                    container.appendChild(card);
+                });
+            }
+        }
+
+        function renderSubjectFiles(files) {
+            const grid = document.getElementById('subjectFilesGrid');
+            const emptyNotice = document.getElementById('emptySubjectNotice');
+            grid.innerHTML = '';
+
+            if (files.length === 0) {
+                emptyNotice.classList.remove('hidden');
+            } else {
+                emptyNotice.classList.add('hidden');
+                files.forEach(file => {
+                    const card = createFileCard(file, true);
+                    grid.appendChild(card);
+                });
+            }
+        }
+
+        function getFileBadgeStyle(ext) {
+            ext = ext.toLowerCase();
+            if (ext === 'pptx') return { bg: '#ea4335', text: 'PPTX', icon: 'presentation' };
+            if (ext === 'docx') return { bg: '#1a73e8', text: 'DOCX', icon: 'file-text' };
+            if (['xlsx', 'xls', 'csv'].includes(ext)) return { bg: '#34a853', text: 'XLSX', icon: 'table' };
+            if (ext === 'pdf') return { bg: '#d93025', text: 'PDF', icon: 'file' };
+            if (ext === 'zip') return { bg: '#f9ab00', text: 'ZIP', icon: 'archive' };
+            return { bg: '#9334e6', text: ext.toUpperCase(), icon: 'code' };
+        }
+
+        function createFileCard(file, isInsideSubject = false) {
+            const ext = file.name.split('.').pop();
+            const badge = getFileBadgeStyle(ext);
+            const parentSubject = allSubjects.find(s => s.id === file.subjectId);
+
+            const card = document.createElement('div');
+            card.className = "bg-google-container dark:bg-google-containerDark border border-google-outline dark:border-google-outlineDark hover:border-google-blue dark:hover:border-google-blueDark rounded-2xl p-4 cursor-pointer smooth-m3 shadow-sm hover:shadow-m3-2 flex flex-col justify-between group";
+            card.innerHTML = `
+                <div class="flex items-start justify-between">
+                    <div class="w-10 h-10 rounded-xl flex items-center justify-center text-white shrink-0" style="background-color: ${badge.bg}">
+                        <i data-lucide="${badge.icon}" class="w-5 h-5"></i>
+                    </div>
+                    <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 smooth-m3">
+                        <button onclick="event.stopPropagation(); deleteFile('${file.id}')" class="p-1 rounded-lg text-red-400 hover:bg-red-500/10" title="حذف">
+                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mt-3">
+                    <h4 class="font-bold text-xs text-google-textPrimary dark:text-google-textPrimaryDark truncate group-hover:text-google-blue dark:group-hover:text-google-blueDark transition" title="${file.name}">
+                        ${file.name}
+                    </h4>
+                    <div class="flex items-center justify-between mt-2 text-[11px] text-google-textSecondary dark:text-google-textSecondaryDark">
+                        <span>${(file.size / 1024).toFixed(1)} KB</span>
+                        ${!isInsideSubject && parentSubject ? `<span class="px-2 py-0.5 rounded-full bg-google-containerHigh dark:bg-google-containerHighDark text-[10px] truncate max-w-[100px]">${parentSubject.name}</span>` : ''}
+                    </div>
+                </div>
+            `;
+            card.onclick = () => openFileInViewer(file);
+            return card;
+        }
+
+        const folderFileInput = document.getElementById('folderFileInput');
+        folderFileInput.addEventListener('change', async (e) => {
+            if (!currentSubjectId) return;
+            const files = Array.from(e.target.files);
+            for (const file of files) {
+                await saveFileToSubject(file, currentSubjectId);
+            }
+            folderFileInput.value = '';
+            await loadAppData();
+            openSubjectFolder(currentSubjectId);
+        });
+
+        const directFileInput = document.getElementById('directFileInput');
+        directFileInput.addEventListener('change', (e) => {
+            if (e.target.files.length) {
+                const file = e.target.files[0];
+                openFileInViewer({
+                    name: file.name,
+                    size: file.size,
+                    blob: file,
+                    isDirect: true
+                });
+            }
+        });
+
+        function openDirectUpload() {
+            directFileInput.click();
+        }
+
+        async function saveFileToSubject(file, subjectId) {
+            const record = {
+                id: 'file_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+                subjectId: subjectId,
+                name: file.name,
+                size: file.size,
+                type: file.type,
+                blob: file,
+                createdAt: Date.now()
+            };
+            await dbPut('files', record);
+        }
+
+        async function deleteFile(fileId) {
+            if (!confirm('متأكد بدك تحذف هالملف؟')) return;
+            await dbDelete('files', fileId);
+            await loadAppData();
+            if (currentSubjectId) openSubjectFolder(currentSubjectId);
+        }
+
+        const subjectDropZone = document.getElementById('subjectDropZone');
+        ['dragenter', 'dragover'].forEach(eventName => {
+            subjectDropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                subjectDropZone.classList.add('border-google-blue', 'bg-google-blueContainer/10');
+            }, false);
+        });
+        ['dragleave', 'drop'].forEach(eventName => {
+            subjectDropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                subjectDropZone.classList.remove('border-google-blue', 'bg-google-blueContainer/10');
+            }, false);
+        });
+        subjectDropZone.addEventListener('drop', async (e) => {
+            if (!currentSubjectId) return;
+            const dt = e.dataTransfer;
+            const files = Array.from(dt.files);
+            for (const file of files) {
+                await saveFileToSubject(file, currentSubjectId);
+            }
+            await loadAppData();
+            openSubjectFolder(currentSubjectId);
+        });
+
+        function filterFiles(type) {
+            activeFilter = type;
+            document.querySelectorAll('.chip-filter').forEach(btn => {
+                btn.className = "chip-filter px-3 py-1 rounded-full text-xs font-medium text-google-textSecondary dark:text-google-textSecondaryDark hover:bg-google-containerHigh dark:hover:bg-google-containerHighDark smooth-m3";
+            });
+            event.target.className = "chip-filter active px-3 py-1 rounded-full text-xs font-bold bg-google-blueContainer dark:bg-google-blueContainerDark text-google-blue dark:text-google-blueDark smooth-m3";
+            renderFilesGrid(allFiles);
+            lucide.createIcons();
+        }
+
+        document.getElementById('globalSearchInput').addEventListener('input', (e) => {
+            const query = e.target.value.trim().toLowerCase();
+            const clearBtn = document.getElementById('clearSearchBtn');
+            if (query) {
+                clearBtn.classList.remove('hidden');
+                const matched = allFiles.filter(f => f.name.toLowerCase().includes(query));
+                renderFilesGrid(matched);
+            } else {
+                clearBtn.classList.add('hidden');
+                renderFilesGrid(allFiles);
+            }
+            lucide.createIcons();
+        });
+        document.getElementById('clearSearchBtn').addEventListener('click', () => {
+            document.getElementById('globalSearchInput').value = '';
+            document.getElementById('clearSearchBtn').classList.add('hidden');
+            renderFilesGrid(allFiles);
+            lucide.createIcons();
+        });
+
+        function openNewFolderModal() {
+            const idInput = document.getElementById('modalSubjectId');
+            const nameInput = document.getElementById('modalSubjectName');
+            const codeInput = document.getElementById('modalSubjectCode');
+            const titleEl = document.getElementById('modalSubjectTitle') || document.getElementById('subjectModalTitle');
+            const modal = document.getElementById('subjectModal');
+
+            if (idInput) idInput.value = '';
+            if (nameInput) nameInput.value = '';
+            if (codeInput) codeInput.value = '';
+            if (titleEl) titleEl.textContent = 'ضيف مادة جديدة';
+            
+            selectColor('#1a73e8');
+            if (modal) modal.classList.remove('hidden');
+            setTimeout(() => {
+                if (nameInput) nameInput.focus();
+            }, 100);
+        }
+
+        function closeSubjectModal() {
+            const modal = document.getElementById('subjectModal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function openDeveloperModal() {
+            const modal = document.getElementById('developerModal');
+            if (modal) modal.classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function closeDeveloperModal() {
+            const modal = document.getElementById('developerModal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeSubjectModal();
+                closeDeveloperModal();
+                if (document.fullscreenElement || viewerContainer.classList.contains('viewer-fullscreen-mode')) {
+                    toggleViewerFullscreen();
+                }
+            }
+        });
+
+        function selectColor(color) {
+            const input = document.getElementById('modalSubjectColor');
+            if (input) input.value = color;
+            document.querySelectorAll('.color-choice').forEach(b => {
+                b.classList.remove('border-white', 'scale-110');
+                b.classList.add('border-transparent');
+                const btnColor = b.getAttribute('data-color') || b.getAttribute('onclick') || '';
+                if (btnColor.includes(color)) {
+                    b.classList.add('border-white', 'scale-110');
+                    b.classList.remove('border-transparent');
+                }
+            });
+        }
+
+        async function saveSubject(e) {
+            if (e && e.preventDefault) e.preventDefault();
+            const id = document.getElementById('modalSubjectId').value || ('subj_' + Date.now());
+            const name = document.getElementById('modalSubjectName').value.trim();
+            const code = document.getElementById('modalSubjectCode').value.trim();
+            const color = document.getElementById('modalSubjectColor').value || '#1a73e8';
+
+            if (!name) return;
+
+            const subject = { id, name, code, color, createdAt: Date.now() };
+            await dbPut('subjects', subject);
+            closeSubjectModal();
+            await loadAppData();
+            openSubjectFolder(id);
+        }
+
+        function editCurrentSubject() {
+            const subject = allSubjects.find(s => s.id === currentSubjectId);
+            if (!subject) return;
+            const idInput = document.getElementById('modalSubjectId');
+            const nameInput = document.getElementById('modalSubjectName');
+            const codeInput = document.getElementById('modalSubjectCode');
+            const titleEl = document.getElementById('modalSubjectTitle') || document.getElementById('subjectModalTitle');
+            const modal = document.getElementById('subjectModal');
+
+            if (idInput) idInput.value = subject.id;
+            if (nameInput) nameInput.value = subject.name;
+            if (codeInput) codeInput.value = subject.code || '';
+            if (titleEl) titleEl.textContent = 'تعديل المادة';
+            selectColor(subject.color || '#1a73e8');
+            if (modal) modal.classList.remove('hidden');
+        }
+
+        async function deleteCurrentSubject() {
+            if (!confirm('متأكد بدك تحذف هالمادة وكل ملفاتها؟')) return;
+            const files = await dbGetFilesBySubject(currentSubjectId);
+            for (const f of files) {
+                await dbDelete('files', f.id);
+            }
+            await dbDelete('subjects', currentSubjectId);
+            currentSubjectId = null;
+            await loadAppData();
+        }
+
+        window.openNewFolderModal = openNewFolderModal;
+        window.closeSubjectModal = closeSubjectModal;
+        window.openDeveloperModal = openDeveloperModal;
+        window.closeDeveloperModal = closeDeveloperModal;
+        window.selectColor = selectColor;
+        window.saveSubject = saveSubject;
+        window.editCurrentSubject = editCurrentSubject;
+        window.deleteCurrentSubject = deleteCurrentSubject;
+
+        async function updateStorageStats() {
+            let totalBytes = allFiles.reduce((acc, f) => acc + (f.size || 0), 0);
+            const mb = (totalBytes / (1024 * 1024)).toFixed(1);
+            document.getElementById('storageUsageText').textContent = `${mb} MB`;
+            const pct = Math.min(Math.round((totalBytes / (500 * 1024 * 1024)) * 100), 100);
+            document.getElementById('storageProgressBar').style.width = `${pct}%`;
+        }
+
+        const viewerContainer = document.getElementById('viewerContainer');
+        const pptxVisualMount = document.getElementById('pptxVisualMount');
+        const pptxReaderMount = document.getElementById('pptxReaderMount');
+        const generalMount = document.getElementById('generalMount');
+        const pptxModeSwitcher = document.getElementById('pptxModeSwitcher');
+        const zoomControls = document.getElementById('zoomControls');
+        const zoomSlider = document.getElementById('zoomSlider');
+        const zoomValue = document.getElementById('zoomValue');
+        const viewerLoading = document.getElementById('viewerLoading');
+
+        zoomSlider.addEventListener('input', (e) => {
+            const scale = e.target.value / 100;
+            zoomValue.textContent = `${e.target.value}%`;
+            pptxVisualMount.style.transform = `scale(${scale})`;
+            pptxVisualMount.style.transformOrigin = 'top center';
+        });
+
+        function switchPptxMode(mode) {
+            const btnVisual = document.getElementById('btnVisualMode');
+            const btnReader = document.getElementById('btnReaderMode');
+            if (mode === 'visual') {
+                pptxVisualMount.classList.remove('hidden');
+                pptxReaderMount.classList.add('hidden');
+                zoomControls.classList.remove('hidden');
+                btnVisual.className = "px-3 py-1 rounded-lg text-xs font-bold bg-google-blue text-white transition flex items-center gap-1.5 shadow-sm";
+                btnReader.className = "px-3 py-1 rounded-lg text-xs font-bold text-google-textSecondary dark:text-google-textSecondaryDark hover:text-white transition flex items-center gap-1.5";
+            } else {
+                pptxVisualMount.classList.add('hidden');
+                pptxReaderMount.classList.remove('hidden');
+                zoomControls.classList.add('hidden');
+                btnReader.className = "px-3 py-1 rounded-lg text-xs font-bold bg-google-blue text-white transition flex items-center gap-1.5 shadow-sm";
+                btnVisual.className = "px-3 py-1 rounded-lg text-xs font-bold text-google-textSecondary dark:text-google-textSecondaryDark hover:text-white transition flex items-center gap-1.5";
+            }
+        }
+
+        const studentLoadingPhrases = [
+            "ثواني وبنجهّزلك الملف.. خذلك رشفة قهوة أو شاي ☕",
+            "عم نفكفك المحاضرة ونجهّزها بأعلى دقة ووضوح ✨",
+            "لحظة وحدة.. بنرتب السلايدات لتدرس بروقان وتركيز 🚀",
+            "كل التوفيق والنجاح يا رب بدراستك! عم نفتح هلقيت 📚",
+            "تكتكة سريعة والملف بصير قدامك كامل بأحلى ترتيب..",
+            "بنجهّزلك وضع القراءة والنسخ عشان تلخّص ع راحتك 📝",
+            "ملفك في أمان ومحفوظ ومحمل بأعلى جودة شاشة 🎯"
+        ];
+
+        async function openFileInViewer(fileRecord) {
+            currentActiveFile = fileRecord;
+            closeSidebarMobile();
+
+            const overlay = document.getElementById('fileLaunchOverlay');
+            const fileNameEl = document.getElementById('launchFileName');
+            const badgeEl = document.getElementById('launchFileBadge');
+            const iconContainer = document.getElementById('launchFileIconContainer');
+            const pulseRing = document.getElementById('launchFilePulse');
+            const progressBar = document.getElementById('launchProgressBar');
+            const phaseText = document.getElementById('launchPhaseText');
+
+            const ext = fileRecord.name.split('.').pop().toLowerCase();
+            const badge = getFileBadgeStyle(ext);
+
+            fileNameEl.textContent = fileRecord.name;
+            badgeEl.textContent = badge.text;
+            badgeEl.style.color = badge.bg;
+            iconContainer.style.backgroundColor = badge.bg;
+            pulseRing.style.backgroundColor = badge.bg;
+            iconContainer.innerHTML = `<i data-lucide="${badge.icon}" class="w-10 h-10"></i>`;
+            lucide.createIcons();
+
+            const initialPhrase = studentLoadingPhrases[Math.floor(Math.random() * studentLoadingPhrases.length)];
+            phaseText.textContent = initialPhrase;
+            progressBar.style.width = '20%';
+
+            overlay.classList.remove('hidden');
+
+            const timerPhase1 = setTimeout(() => {
+                progressBar.style.width = '65%';
+                phaseText.textContent = "عم ننسّق الخطوط والشاشات لتطلع واضحة وروعة ✨";
+            }, 400);
+
+            const timerPhase2 = setTimeout(() => {
+                progressBar.style.width = '90%';
+                phaseText.textContent = "ثواني والملف بكون بين إيديك.. لحظات وبنبدأ! 🚀";
+            }, 850);
+
+            // Prepare viewer container in background
+            document.getElementById('welcomeView').classList.add('hidden');
+            document.getElementById('dashboardView').classList.add('hidden');
+            document.getElementById('subjectFolderView').classList.add('hidden');
+            viewerContainer.classList.remove('hidden');
+
+            document.getElementById('viewerFileName').textContent = fileRecord.name;
+            const viewerFileIcon = document.getElementById('viewerFileIcon');
+            viewerFileIcon.style.backgroundColor = badge.bg;
+            viewerFileIcon.innerHTML = `<i data-lucide="${badge.icon}" class="w-3.5 h-3.5"></i>`;
+
+            document.getElementById('viewerDownloadBtn').onclick = () => {
+                const url = URL.createObjectURL(fileRecord.blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fileRecord.name;
+                a.click();
+            };
+
+            pptxVisualMount.innerHTML = '';
+            pptxReaderMount.innerHTML = '';
+            generalMount.innerHTML = '';
+            pptxVisualMount.classList.add('hidden');
+            pptxReaderMount.classList.add('hidden');
+            generalMount.classList.add('hidden');
+            pptxModeSwitcher.classList.add('hidden');
+            zoomControls.classList.add('hidden');
+
+            const startTime = Date.now();
+            try {
+                const fileBlob = fileRecord.blob;
+                if (ext === 'pptx') {
+                    await renderFullPPTX(fileBlob);
+                } else if (ext === 'docx') {
+                    await renderFullDOCX(fileBlob);
+                } else if (['xlsx', 'xls', 'csv'].includes(ext)) {
+                    await renderExcel(fileBlob);
+                } else if (ext === 'zip') {
+                    await renderZIP(fileBlob);
+                } else if (ext === 'pdf') {
+                    renderPDF(fileBlob);
+                } else if (fileBlob.type && fileBlob.type.startsWith('image/')) {
+                    renderImage(fileBlob);
+                } else {
+                    await renderCodeOrText(fileBlob, ext);
+                }
+            } catch (err) {
+                generalMount.classList.remove('hidden');
+                generalMount.innerHTML = `<div class="p-6 max-w-2xl mx-auto rounded-2xl bg-red-500/10 border border-red-500/30 text-red-300">صار خطأ أثناء فتح الملف: ${err.message}</div>`;
+            }
+
+            // Ensure smooth, pleasant transition time (min ~1150ms)
+            const elapsed = Date.now() - startTime;
+            const remaining = Math.max(0, 1150 - elapsed);
+            await new Promise(r => setTimeout(r, remaining));
+
+            progressBar.style.width = '100%';
+            phaseText.textContent = "جاهز تماماً! تم فتح الملف بنجاح 🎉";
+
+            await new Promise(r => setTimeout(r, 220));
+            clearTimeout(timerPhase1);
+            clearTimeout(timerPhase2);
+            overlay.classList.add('hidden');
+            lucide.createIcons();
+        }
+
+        function closeViewer() {
+            if (document.fullscreenElement || viewerContainer.classList.contains('viewer-fullscreen-mode')) {
+                toggleViewerFullscreen();
+            }
+            viewerContainer.classList.add('hidden');
+            if (currentSubjectId) {
+                openSubjectFolder(currentSubjectId);
+            } else if (allSubjects.length > 0) {
+                showDashboardView();
+            } else {
+                showWelcomeView();
+            }
+        }
+
+        async function renderFullPPTX(blob) {
+            pptxVisualMount.classList.remove('hidden');
+            pptxModeSwitcher.classList.remove('hidden');
+            pptxModeSwitcher.classList.add('flex');
+            zoomControls.classList.remove('hidden');
+            switchPptxMode('visual');
+
+            const arrayBuffer = await blob.arrayBuffer();
+            const availableWidth = window.innerWidth < 640 ? (window.innerWidth - 32) : Math.min(window.innerWidth - 120, 1020);
+            const renderWidth = Math.max(300, availableWidth);
+            const renderHeight = Math.round(renderWidth * (9 / 16));
+
+            const pptxPrv = window.pptxPreview.init(pptxVisualMount, {
+                width: renderWidth,
+                height: renderHeight
+            });
+            await pptxPrv.preview(arrayBuffer);
+            buildPptxReaderBackup(blob);
+        }
+
+        async function buildPptxReaderBackup(blob) {
+            const zip = await JSZip.loadAsync(blob);
+            const slideFiles = Object.keys(zip.files)
+                .filter(name => /^ppt\/slides\/slide\d+\.xml$/.test(name))
+                .sort((a, b) => parseInt(a.match(/slide(\d+)\.xml/)[1]) - parseInt(b.match(/slide(\d+)\.xml/)[1]));
+
+            for (let i = 0; i < slideFiles.length; i++) {
+                const xmlStr = await zip.file(slideFiles[i]).async('string');
+                const xmlDoc = new DOMParser().parseFromString(xmlStr, 'application/xml');
+                const texts = Array.from(xmlDoc.getElementsByTagName('a:t')).map(n => n.textContent).filter(Boolean);
+                
+                pptxReaderMount.innerHTML += `
+                    <div class="bg-google-container dark:bg-google-containerDark p-5 rounded-2xl border border-google-outline dark:border-google-outlineDark space-y-2 shadow-sm">
+                        <div class="text-xs font-bold text-google-yellow">شريحة ${i + 1} (نصوص قابلة للنسخ)</div>
+                        <p class="text-sm text-google-textPrimary dark:text-google-textPrimaryDark leading-relaxed">${texts.join(' • ') || 'شريحة صور ورسومات'}</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function renderFullDOCX(blob) {
+            generalMount.classList.remove('hidden');
+            generalMount.innerHTML = `<div id="docxVisualMount" class="max-w-4xl mx-auto overflow-x-auto"></div>`;
+            const arrayBuffer = await blob.arrayBuffer();
+            await window.docx.renderAsync(arrayBuffer, document.getElementById('docxVisualMount'));
+        }
+
+        async function renderExcel(blob) {
+            generalMount.classList.remove('hidden');
+            const data = await blob.arrayBuffer();
+            const workbook = XLSX.read(data, { type: 'array' });
+            workbook.SheetNames.forEach((sheetName) => {
+                const htmlTable = XLSX.utils.sheet_to_html(workbook.Sheets[sheetName]);
+                generalMount.innerHTML += `
+                    <div class="bg-google-container dark:bg-google-containerDark max-w-5xl mx-auto rounded-2xl p-5 border border-google-outline dark:border-google-outlineDark overflow-x-auto mb-6 space-y-3 shadow-sm">
+                        <div class="text-google-green font-bold text-sm flex items-center gap-2">
+                            <i data-lucide="sheet" class="w-4 h-4"></i>
+                            <span>ورقة عمل: ${sheetName}</span>
+                        </div>
+                        <div class="text-xs text-google-textPrimary dark:text-google-textPrimaryDark [&_table]:w-full [&_table]:border-collapse [&_td]:border [&_td]:border-google-outline dark:[&_td]:border-google-outlineDark [&_td]:p-2">${htmlTable}</div>
+                    </div>
+                `;
+            });
+        }
+
+        async function renderZIP(blob) {
+            generalMount.classList.remove('hidden');
+            const zip = await JSZip.loadAsync(blob);
+            const filesList = Object.keys(zip.files).filter(f => !zip.files[f].dir);
+            window.currentZip = zip;
+
+            generalMount.innerHTML = `
+                <div class="bg-google-container dark:bg-google-containerDark max-w-4xl mx-auto rounded-2xl p-6 border border-google-outline dark:border-google-outlineDark space-y-4 shadow-sm">
+                    <h3 class="font-bold text-google-yellow text-sm">ملفات الأرشيف المضغوط (${filesList.length} ملف)</h3>
+                    <div class="space-y-2 max-h-96 overflow-y-auto">
+                        ${filesList.map(f => `
+                            <div class="flex items-center justify-between p-3 rounded-xl bg-google-containerHigh dark:bg-google-containerHighDark border border-google-outline dark:border-google-outlineDark">
+                                <span class="text-xs text-google-textPrimary dark:text-google-textPrimaryDark truncate font-mono" dir="ltr">${f}</span>
+                                <button onclick="previewZipText('${f}')" class="text-xs bg-google-blue text-white px-3 py-1 rounded-lg">معاينة</button>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div id="zipPreviewBox" class="hidden pt-4 border-t border-google-outline dark:border-google-outlineDark"></div>
+                </div>
+            `;
+        }
+
+        async function previewZipText(filename) {
+            const box = document.getElementById('zipPreviewBox');
+            box.classList.remove('hidden');
+            const content = await window.currentZip.file(filename).async('string');
+            box.innerHTML = `<pre class="bg-google-surface dark:bg-google-surfaceDark p-4 rounded-xl overflow-x-auto text-xs text-google-textSecondary font-mono" dir="ltr"><code>${ content.replace(/[&<>]/g, '') }</code></pre>`;
+        }
+
+        function renderPDF(blob) {
+            generalMount.classList.remove('hidden');
+            const url = URL.createObjectURL(blob);
+            generalMount.innerHTML = `<iframe src="${url}" class="w-full max-w-5xl mx-auto h-[80vh] rounded-2xl border border-google-outline dark:border-google-outlineDark shadow-sm"></iframe>`;
+        }
+
+        function renderImage(blob) {
+            generalMount.classList.remove('hidden');
+            const url = URL.createObjectURL(blob);
+            generalMount.innerHTML = `<div class="flex justify-center"><img src="${url}" class="max-h-[78vh] rounded-2xl border border-google-outline dark:border-google-outlineDark shadow-sm" /></div>`;
+        }
+
+        async function renderCodeOrText(blob, ext) {
+            generalMount.classList.remove('hidden');
+            const text = await blob.text();
+            generalMount.innerHTML = `
+                <div class="bg-google-container dark:bg-google-containerDark max-w-4xl mx-auto rounded-2xl p-5 border border-google-outline dark:border-google-outlineDark shadow-sm">
+                    <pre class="rounded-xl overflow-x-auto text-xs bg-google-surface dark:bg-google-surfaceDark p-4 font-mono" dir="ltr"><code class="language-${ext}">${text.replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}</code></pre>
+                </div>
+            `;
+            Prism.highlightAll();
+        }
+
+        const notesDrawer = document.getElementById('notesDrawer');
+        const notesInput = document.getElementById('globalNotesInput');
+
+        function toggleNotesDrawer() {
+            notesDrawer.classList.toggle('hidden');
+            const backdrop = document.getElementById('notesBackdrop');
+            if (backdrop) {
+                if (notesDrawer.classList.contains('hidden')) {
+                    backdrop.classList.add('hidden');
+                } else if (window.innerWidth < 768) {
+                    backdrop.classList.remove('hidden');
+                }
+            }
+        }
+        document.getElementById('toggleNotesDrawerBtn').addEventListener('click', toggleNotesDrawer);
+
+        notesInput.value = localStorage.getItem('salis_academic_notes') || '';
+        notesInput.addEventListener('input', () => {
+            localStorage.setItem('salis_academic_notes', notesInput.value);
+            const status = document.getElementById('notesSaveStatus');
+            status.textContent = '✓ تمام';
+            status.className = 'text-green-500 font-bold';
+        });
+
+        function exportNotes() {
+            const blob = new Blob([notesInput.value], { type: 'text/plain;charset=utf-8' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `ملاحظات_سلس.txt`;
+            a.click();
+        }
+
+        const themeToggleBtn = document.getElementById('themeToggleBtn');
+        themeToggleBtn.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            localStorage.setItem('salis_theme', isDark ? 'dark' : 'light');
+            lucide.createIcons();
+        });
+
+        if (localStorage.getItem('salis_theme') === 'light') {
+            document.documentElement.classList.remove('dark');
+        }
+
+        function toggleSidebarMobile() {
+            const sidebar = document.getElementById('mainSidebar');
+            const backdrop = document.getElementById('sidebarBackdrop');
+            if (window.innerWidth < 768) {
+                const isClosed = sidebar.classList.contains('translate-x-full');
+                if (isClosed) {
+                    sidebar.classList.remove('translate-x-full');
+                    if (backdrop) backdrop.classList.remove('hidden');
+                } else {
+                    sidebar.classList.add('translate-x-full');
+                    if (backdrop) backdrop.classList.add('hidden');
+                }
+            } else {
+                sidebar.classList.toggle('hidden');
+            }
+        }
+
+        function closeSidebarMobile() {
+            const sidebar = document.getElementById('mainSidebar');
+            const backdrop = document.getElementById('sidebarBackdrop');
+            if (window.innerWidth < 768) {
+                if (sidebar) sidebar.classList.add('translate-x-full');
+                if (backdrop) backdrop.classList.add('hidden');
+            }
+        }
+
+        document.getElementById('toggleSidebarBtn').addEventListener('click', toggleSidebarMobile);
+
+        function toggleViewerFullscreen() {
+            const isFs = document.fullscreenElement || viewerContainer.classList.contains('viewer-fullscreen-mode');
+            if (isFs) {
+                if (document.fullscreenElement) {
+                    document.exitFullscreen().catch(() => {});
+                }
+                viewerContainer.classList.remove('viewer-fullscreen-mode');
+                updateFullscreenUI(false);
+            } else {
+                viewerContainer.classList.add('viewer-fullscreen-mode');
+                if (viewerContainer.requestFullscreen) {
+                    viewerContainer.requestFullscreen().catch(() => {});
+                } else if (viewerContainer.webkitRequestFullscreen) {
+                    viewerContainer.webkitRequestFullscreen().catch(() => {});
+                }
+                updateFullscreenUI(true);
+            }
+        }
+
+        function updateFullscreenUI(active) {
+            const icon = document.getElementById('fullscreenIcon');
+            const text = document.getElementById('fullscreenText');
+            const floatBtn = document.getElementById('floatingExitFullscreenBtn');
+
+            if (active) {
+                if (icon) icon.setAttribute('data-lucide', 'minimize-2');
+                if (text) text.textContent = 'تصغير';
+                if (floatBtn) {
+                    floatBtn.classList.remove('hidden');
+                    floatBtn.classList.add('flex');
+                }
+            } else {
+                if (icon) icon.setAttribute('data-lucide', 'maximize-2');
+                if (text) text.textContent = 'ملء الشاشة';
+                if (floatBtn) {
+                    floatBtn.classList.add('hidden');
+                    floatBtn.classList.remove('flex');
+                }
+            }
+            lucide.createIcons();
+        }
+
+        document.addEventListener('fullscreenchange', () => {
+            if (!document.fullscreenElement) {
+                viewerContainer.classList.remove('viewer-fullscreen-mode');
+                updateFullscreenUI(false);
+            }
+        });
+        document.addEventListener('webkitfullscreenchange', () => {
+            if (!document.webkitFullscreenElement) {
+                viewerContainer.classList.remove('viewer-fullscreen-mode');
+                updateFullscreenUI(false);
+            }
+        });
+
+        window.navigateHome = navigateHome;
+        window.openSubjectFolder = openSubjectFolder;
+        window.deleteFile = deleteFile;
+        window.openDirectUpload = openDirectUpload;
+        window.filterFiles = filterFiles;
+        window.switchPptxMode = switchPptxMode;
+        window.exportNotes = exportNotes;
+        window.previewZipText = previewZipText;
+        window.toggleViewerFullscreen = toggleViewerFullscreen;
+        window.closeSidebarMobile = closeSidebarMobile;
+
+        async function bootApp() {
+            try {
+                await initDB();
+                await loadAppData();
+                if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
+                    navigator.serviceWorker.register('./sw.js').catch(() => {});
+                }
+            } catch (e) {
+                console.error('App init error:', e);
+            }
+        }
+
+        if (document.readyState === 'loading') {
+            window.addEventListener('DOMContentLoaded', bootApp);
+        } else {
+            bootApp();
+        }
+    </script>
+</body>
+</html>
