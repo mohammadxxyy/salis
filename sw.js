@@ -1,6 +1,6 @@
-// Service Worker for Salis PWA
-const CACHE_NAME = 'salis-v1';
-const ASSETS_TO_CACHE = [
+// Service Worker for Salis PWA - Full Offline Resilience
+const CACHE_NAME = 'salis-v2';
+const CORE_ASSETS = [
   './',
   './index.html',
   './manifest.json',
@@ -10,7 +10,7 @@ const ASSETS_TO_CACHE = [
 self.addEventListener('install', (e) => {
   e.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS_TO_CACHE);
+      return cache.addAll(CORE_ASSETS);
     }).then(() => self.skipWaiting())
   );
 });
@@ -26,20 +26,24 @@ self.addEventListener('activate', (e) => {
 });
 
 self.addEventListener('fetch', (e) => {
-  // Only cache GET requests
   if (e.request.method !== 'GET') return;
   
+  // Cache-First strategy with automatic CDN caching
   e.respondWith(
     caches.match(e.request).then((cachedResponse) => {
       if (cachedResponse) {
         return cachedResponse;
       }
       return fetch(e.request).then((networkResponse) => {
-        // Return response from network if valid
+        if (networkResponse && (networkResponse.status === 200 || networkResponse.type === 'opaque')) {
+          const responseToCache = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(e.request, responseToCache).catch(() => {});
+          });
+        }
         return networkResponse;
       }).catch(() => {
-        // If offline and request is HTML, return cached index
-        if (e.request.headers.get('accept') && e.request.headers.get('accept').includes('text/html')) {
+        if (e.request.mode === 'navigate' || (e.request.headers.get('accept') && e.request.headers.get('accept').includes('text/html'))) {
           return caches.match('./index.html');
         }
       });

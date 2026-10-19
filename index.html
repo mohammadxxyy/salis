@@ -78,21 +78,118 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
 
     <style>
+        /* Tailwind CSS v4 @theme Tokens & shadcn/ui Design System */
+        @theme {
+            --font-sans: 'Tajawal', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+            --font-mono: 'Consolas', 'Monaco', monospace;
+            --radius-sm: 0.5rem;
+            --radius-md: 0.75rem;
+            --radius-lg: 1rem;
+            --radius-xl: 1.25rem;
+            --radius-2xl: 1.5rem;
+        }
+
         :root {
+            /* shadcn/ui & Base UI Color & Surface Tokens */
+            --background: #f8fafd;
+            --foreground: #1f1f1f;
+            --card: #ffffff;
+            --card-foreground: #1f1f1f;
+            --popover: #ffffff;
+            --popover-foreground: #1f1f1f;
+            --primary: #1a73e8;
+            --primary-foreground: #ffffff;
+            --secondary: #f0f4f9;
+            --secondary-foreground: #1f1f1f;
+            --muted: #f0f4f9;
+            --muted-foreground: #5f6368;
+            --accent: #e8f0fe;
+            --accent-foreground: #1a73e8;
+            --destructive: #ea4335;
+            --destructive-foreground: #ffffff;
+            --border: #e1e3e1;
+            --input: #e1e3e1;
+            --ring: #1a73e8;
+            --radius: 1rem;
+
             --surface-bg: #f8fafd;
             --container-bg: #ffffff;
             --container-high: #f0f4f9;
             --border-subtle: #e1e3e1;
             --text-main: #1f1f1f;
             --text-sub: #5f6368;
+
+            /* 2026 Intelligent Motion Curve Tokens */
+            --motion-spring: cubic-bezier(0.16, 1, 0.3, 1);
+            --motion-calm: cubic-bezier(0.2, 0.8, 0.2, 1);
+            --motion-duration-fast: 180ms;
+            --motion-duration-normal: 250ms;
         }
+
         .dark {
+            --background: #131314;
+            --foreground: #e3e3e3;
+            --card: #1e1f20;
+            --card-foreground: #e3e3e3;
+            --popover: #1e1f20;
+            --popover-foreground: #e3e3e3;
+            --primary: #a8c7fa;
+            --primary-foreground: #003060;
+            --secondary: #282a2c;
+            --secondary-foreground: #e3e3e3;
+            --muted: #282a2c;
+            --muted-foreground: #9aa0a6;
+            --accent: #004a77;
+            --accent-foreground: #a8c7fa;
+            --destructive: #f2b8b5;
+            --destructive-foreground: #601410;
+            --border: #37393b;
+            --input: #37393b;
+            --ring: #a8c7fa;
+
             --surface-bg: #131314;
             --container-bg: #1e1f20;
             --container-high: #282a2c;
             --border-subtle: #37393b;
             --text-main: #e3e3e3;
             --text-sub: #9aa0a6;
+        }
+
+        /* 2026 Core Accessibility: Strict Respect for prefers-reduced-motion */
+        @media (prefers-reduced-motion: reduce) {
+            *, ::before, ::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+            .google-bar, .google-bar-alive, .google-bar-fast, .bell-ring-active {
+                animation: none !important;
+            }
+            .apple-tap:active, .apple-card:hover, .apple-card:active {
+                transform: none !important;
+            }
+        }
+
+        /* In-App Reduced Motion Override */
+        .reduced-motion *, 
+        .reduced-motion *::before, 
+        .reduced-motion *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+            scroll-behavior: auto !important;
+        }
+        .reduced-motion .google-bar,
+        .reduced-motion .google-bar-alive,
+        .reduced-motion .google-bar-fast,
+        .reduced-motion .bell-ring-active {
+            animation: none !important;
+        }
+        .reduced-motion .apple-tap:active,
+        .reduced-motion .apple-card:hover,
+        .reduced-motion .apple-card:active {
+            transform: none !important;
         }
         body {
             background-color: var(--surface-bg);
@@ -136,7 +233,39 @@
             box-sizing: border-box !important;
         }
         .smooth-m3 {
-            transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .apple-tap {
+            transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), filter 0.18s ease;
+        }
+        .apple-tap:active {
+            transform: scale(0.95);
+        }
+        .apple-card {
+            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
+        }
+        .apple-card:hover {
+            transform: translateY(-2px);
+        }
+        .apple-card:active {
+            transform: scale(0.98);
+        }
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 0 1px rgba(0, 0, 0, 0.1);
+        }
+        .dark .glass-nav {
+            background: rgba(30, 31, 32, 0.88);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 0 1px rgba(255, 255, 255, 0.1);
+        }
+        @supports (padding: env(safe-area-inset-bottom)) {
+            .safe-bottom-pad {
+                padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+            }
         }
 
         .viewer-fullscreen-mode {
@@ -250,28 +379,28 @@
             </div>
         </div>
 
-        <div class="flex items-center gap-2">
-            <button onclick="openDeveloperModal()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full hover:bg-google-containerHigh dark:hover:bg-google-containerHighDark text-google-textSecondary dark:text-google-textSecondaryDark transition text-xs font-bold" title="عن المطور">
+        <div class="flex items-center gap-1.5 sm:gap-2">
+            <button onclick="openDeveloperModal()" class="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full hover:bg-google-containerHigh dark:hover:bg-google-containerHighDark text-google-textSecondary dark:text-google-textSecondaryDark transition text-xs font-bold apple-tap" title="عن المطور">
                 <div class="w-5 h-5 rounded-full bg-gradient-to-tr from-google-blue to-purple-600 flex items-center justify-center text-white text-[10px] font-bold shadow-sm">M</div>
                 <span class="hidden md:inline">عن المطور</span>
             </button>
 
-            <button onclick="openNewFolderModal()" class="flex items-center gap-2 bg-google-blueContainer dark:bg-google-blueContainerDark text-google-blue dark:text-google-blueDark px-4 py-2 rounded-full text-xs font-bold hover:brightness-105 smooth-m3 shadow-sm">
+            <button onclick="openNewFolderModal()" class="hidden md:flex items-center gap-2 bg-google-blueContainer dark:bg-google-blueContainerDark text-google-blue dark:text-google-blueDark px-4 py-2 rounded-full text-xs font-bold hover:brightness-105 smooth-m3 shadow-sm apple-tap">
                 <i data-lucide="folder-plus" class="w-4 h-4"></i>
                 <span class="hidden sm:inline">مادة جديدة</span>
             </button>
 
-            <button id="toggleRemindersBtn" onclick="toggleRemindersDrawer()" class="p-2.5 rounded-full hover:bg-google-containerHigh dark:hover:bg-google-containerHighDark text-google-textSecondary dark:text-google-textSecondaryDark transition relative group" title="تذكيراتي ومهامي">
+            <button id="toggleRemindersBtn" onclick="toggleRemindersDrawer()" class="p-2 sm:p-2.5 rounded-full hover:bg-google-containerHigh dark:hover:bg-google-containerHighDark text-google-textSecondary dark:text-google-textSecondaryDark transition relative group apple-tap" title="تذكيراتي ومهامي">
                 <i data-lucide="bell" id="navbarBellIcon" class="w-5 h-5 group-hover:text-google-yellow transition"></i>
                 <span id="remindersNavBadge" class="hidden absolute top-1 right-1 w-4 h-4 bg-google-red text-white text-[9px] font-black rounded-full items-center justify-center shadow-sm">0</span>
             </button>
 
-            <button id="themeToggleBtn" class="p-2.5 rounded-full hover:bg-google-containerHigh dark:hover:bg-google-containerHighDark text-google-textSecondary dark:text-google-textSecondaryDark transition" title="نهاري / ليلي">
+            <button id="themeToggleBtn" class="p-2 sm:p-2.5 rounded-full hover:bg-google-containerHigh dark:hover:bg-google-containerHighDark text-google-textSecondary dark:text-google-textSecondaryDark transition apple-tap" title="نهاري / ليلي">
                 <i data-lucide="sun-medium" class="w-5 h-5 hidden dark:block"></i>
                 <i data-lucide="moon" class="w-5 h-5 block dark:hidden"></i>
             </button>
 
-            <button id="toggleNotesDrawerBtn" class="p-2.5 rounded-full hover:bg-google-containerHigh dark:hover:bg-google-containerHighDark text-google-textSecondary dark:text-google-textSecondaryDark transition" title="ملاحظاتي">
+            <button id="toggleNotesDrawerBtn" class="hidden md:flex p-2.5 rounded-full hover:bg-google-containerHigh dark:hover:bg-google-containerHighDark text-google-textSecondary dark:text-google-textSecondaryDark transition apple-tap" title="ملاحظاتي">
                 <i data-lucide="sticky-note" class="w-5 h-5"></i>
             </button>
         </div>
@@ -349,7 +478,7 @@
         </aside>
 
         <!-- Main Viewports -->
-        <main class="flex-1 overflow-y-auto relative bg-google-surface dark:bg-google-surfaceDark flex flex-col" id="mainContainer">
+        <main class="flex-1 overflow-y-auto relative bg-google-surface dark:bg-google-surfaceDark flex flex-col pb-24 md:pb-6" id="mainContainer">
             
             <!-- Welcome View -->
             <section id="welcomeView" class="hidden flex-1 flex flex-col items-center justify-center p-6 md:p-12 text-center max-w-4xl mx-auto my-auto space-y-8">
@@ -487,11 +616,12 @@
                             <span>آخر الملفات المرفوعة</span>
                         </h3>
                         <div class="flex items-center gap-1.5 overflow-x-auto pb-1" id="fileFilterChips">
-                            <button onclick="filterFiles('all')" class="chip-filter active px-3 py-1 rounded-full text-xs font-bold bg-google-blueContainer dark:bg-google-blueContainerDark text-google-blue dark:text-google-blueDark smooth-m3">الكل</button>
-                            <button onclick="filterFiles('pptx')" class="chip-filter px-3 py-1 rounded-full text-xs font-medium text-google-textSecondary dark:text-google-textSecondaryDark hover:bg-google-containerHigh dark:hover:bg-google-containerHighDark smooth-m3">بوربوينت PPTX</button>
-                            <button onclick="filterFiles('docx')" class="chip-filter px-3 py-1 rounded-full text-xs font-medium text-google-textSecondary dark:text-google-textSecondaryDark hover:bg-google-containerHigh dark:hover:bg-google-containerHighDark smooth-m3">وورد DOCX</button>
-                            <button onclick="filterFiles('pdf')" class="chip-filter px-3 py-1 rounded-full text-xs font-medium text-google-textSecondary dark:text-google-textSecondaryDark hover:bg-google-containerHigh dark:hover:bg-google-containerHighDark smooth-m3">PDF</button>
-                            <button onclick="filterFiles('excel')" class="chip-filter px-3 py-1 rounded-full text-xs font-medium text-google-textSecondary dark:text-google-textSecondaryDark hover:bg-google-containerHigh dark:hover:bg-google-containerHighDark smooth-m3">إكسل</button>
+                            <button onclick="filterFiles('all')" class="chip-filter active px-3 py-1 rounded-full text-xs font-bold bg-google-blueContainer dark:bg-google-blueContainerDark text-google-blue dark:text-google-blueDark smooth-m3 apple-tap">الكل</button>
+                            <button onclick="filterFiles('pptx')" class="chip-filter px-3 py-1 rounded-full text-xs font-medium text-google-textSecondary dark:text-google-textSecondaryDark hover:bg-google-containerHigh dark:hover:bg-google-containerHighDark smooth-m3 apple-tap">بوربوينت PPTX</button>
+                            <button onclick="filterFiles('docx')" class="chip-filter px-3 py-1 rounded-full text-xs font-medium text-google-textSecondary dark:text-google-textSecondaryDark hover:bg-google-containerHigh dark:hover:bg-google-containerHighDark smooth-m3 apple-tap">وورد DOCX</button>
+                            <button onclick="filterFiles('pdf')" class="chip-filter px-3 py-1 rounded-full text-xs font-medium text-google-textSecondary dark:text-google-textSecondaryDark hover:bg-google-containerHigh dark:hover:bg-google-containerHighDark smooth-m3 apple-tap">PDF</button>
+                            <button onclick="filterFiles('excel')" class="chip-filter px-3 py-1 rounded-full text-xs font-medium text-google-textSecondary dark:text-google-textSecondaryDark hover:bg-google-containerHigh dark:hover:bg-google-containerHighDark smooth-m3 apple-tap">إكسل</button>
+                            <button onclick="filterFiles('video')" class="chip-filter px-3 py-1 rounded-full text-xs font-medium text-google-textSecondary dark:text-google-textSecondaryDark hover:bg-google-containerHigh dark:hover:bg-google-containerHighDark smooth-m3 apple-tap">فيديوهات 🎬</button>
                         </div>
                     </div>
 
@@ -523,25 +653,25 @@
                             <h2 id="subjectBannerTitle" class="text-2xl font-extrabold text-google-textPrimary dark:text-google-textPrimaryDark mt-1">اسم المادة</h2>
                         </div>
                     </div>
-                    <div class="flex items-center gap-2">
-                        <label for="folderFileInput" class="cursor-pointer flex items-center gap-2 bg-google-blue text-white px-4 py-2.5 rounded-xl text-xs font-bold hover:brightness-110 smooth-m3 shadow-sm">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <label for="folderFileInput" class="cursor-pointer flex items-center gap-2 bg-google-blue text-white px-4 py-2.5 rounded-xl text-xs font-bold hover:brightness-110 smooth-m3 shadow-sm apple-tap">
                             <i data-lucide="upload" class="w-4 h-4"></i>
                             <span>رفع ملف لهالمادة</span>
                         </label>
-                        <input type="file" id="folderFileInput" class="hidden" accept=".pptx,.docx,.xlsx,.csv,.pdf,.zip,.js,.py,.cpp,.html,.css,.txt,.json,.md,image/*" multiple>
+                        <input type="file" id="folderFileInput" class="hidden" accept="*/*" multiple>
 
-                        <button onclick="openNewReminderForSubject(currentSubjectId)" class="flex items-center gap-1.5 px-3 py-2.5 rounded-xl border border-google-yellow/40 bg-google-yellow/10 hover:bg-google-yellow/20 text-google-yellow text-xs font-bold transition shadow-sm active:scale-95" title="تذكير لهالمادة">
+                        <button onclick="openNewReminderForSubject(currentSubjectId)" class="flex items-center gap-1.5 px-3 py-2.5 rounded-xl border border-google-yellow/40 bg-google-yellow/10 hover:bg-google-yellow/20 text-google-yellow text-xs font-bold transition shadow-sm apple-tap" title="تذكير لهالمادة">
                             <i data-lucide="bell-plus" class="w-4 h-4"></i>
                             <span class="hidden sm:inline">تذكير للمادة</span>
                         </button>
                         
-                        <button onclick="editCurrentSubject()" class="p-2.5 rounded-xl border border-google-outline dark:border-google-outlineDark hover:bg-google-containerHigh dark:hover:bg-google-containerHighDark text-google-textSecondary transition" title="تعديل المادة">
+                        <button onclick="editCurrentSubject()" class="p-2.5 rounded-xl border border-google-outline dark:border-google-outlineDark hover:bg-google-containerHigh dark:hover:bg-google-containerHighDark text-google-textSecondary transition apple-tap" title="تعديل المادة">
                             <i data-lucide="edit-3" class="w-4 h-4"></i>
                         </button>
-                        <button onclick="deleteCurrentSubject()" class="p-2.5 rounded-xl border border-red-500/30 text-red-400 hover:bg-red-500/10 transition" title="حذف المادة">
+                        <button onclick="deleteCurrentSubject()" class="p-2.5 rounded-xl border border-red-500/30 text-red-400 hover:bg-red-500/10 transition apple-tap" title="حذف المادة">
                             <i data-lucide="trash-2" class="w-4 h-4"></i>
                         </button>
-                        <button onclick="navigateHome()" class="p-2.5 rounded-xl border border-google-outline dark:border-google-outlineDark hover:bg-google-containerHigh dark:hover:bg-google-containerHighDark text-google-textSecondary transition" title="رجوع">
+                        <button onclick="navigateHome()" class="p-2.5 rounded-xl border border-google-outline dark:border-google-outlineDark hover:bg-google-containerHigh dark:hover:bg-google-containerHighDark text-google-textSecondary transition apple-tap" title="رجوع">
                             <i data-lucide="arrow-left" class="w-4 h-4"></i>
                         </button>
                     </div>
@@ -643,12 +773,16 @@
                         </div>
 
                         <!-- Fullscreen Toggle Button -->
-                        <button id="viewerFullscreenBtn" onclick="toggleViewerFullscreen()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-google-outline dark:border-google-outlineDark bg-google-containerHigh dark:bg-google-containerHighDark hover:bg-google-blue hover:text-white text-xs font-bold text-google-textPrimary dark:text-google-textPrimaryDark transition shadow-sm active:scale-95" title="ملء الشاشة">
+                        <button id="viewerFullscreenBtn" onclick="toggleViewerFullscreen()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-google-outline dark:border-google-outlineDark bg-google-containerHigh dark:bg-google-containerHighDark hover:bg-google-blue hover:text-white text-xs font-bold text-google-textPrimary dark:text-google-textPrimaryDark transition shadow-sm apple-tap" title="ملء الشاشة">
                             <i id="fullscreenIcon" data-lucide="maximize-2" class="w-4 h-4 text-google-blue dark:text-google-blueDark"></i>
                             <span id="fullscreenText" class="hidden sm:inline">ملء الشاشة</span>
                         </button>
 
-                        <button id="viewerDownloadBtn" class="p-2 rounded-xl border border-google-outline dark:border-google-outlineDark hover:bg-google-containerHigh dark:hover:bg-google-containerHighDark text-google-textSecondary transition" title="تحميل الملف">
+                        <button id="viewerShareBtn" onclick="shareCurrentActiveFile()" class="p-2 rounded-xl border border-google-outline dark:border-google-outlineDark hover:bg-google-blue hover:text-white text-google-textSecondary transition apple-tap" title="مشاركة الملف">
+                            <i data-lucide="share-2" class="w-4 h-4"></i>
+                        </button>
+
+                        <button id="viewerDownloadBtn" class="p-2 rounded-xl border border-google-outline dark:border-google-outlineDark hover:bg-google-containerHigh dark:hover:bg-google-containerHighDark text-google-textSecondary transition apple-tap" title="تحميل الملف">
                             <i data-lucide="download" class="w-4 h-4"></i>
                         </button>
                     </div>
@@ -989,6 +1123,20 @@
                         <i data-lucide="arrow-left" class="w-4 h-4 text-google-textSecondary group-hover:text-pink-500 transition"></i>
                     </div>
                 </a>
+            <!-- Accessibility: Reduced Motion (2026 Trend) -->
+            <div class="p-3.5 rounded-2xl bg-google-containerHigh dark:bg-google-containerHighDark border border-google-outline dark:border-google-outlineDark flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-xl bg-google-blueContainer dark:bg-google-blueContainerDark text-google-blue dark:text-google-blueDark flex items-center justify-center shrink-0">
+                        <i data-lucide="sparkles" class="w-4 h-4"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs font-bold text-google-textPrimary dark:text-google-textPrimaryDark block">الحركات الذكية والهادئة</span>
+                        <span id="reducedMotionStatusText" class="text-[10px] text-google-textSecondary dark:text-google-textSecondaryDark">حركات انسيابية ناعمة مفعلة</span>
+                    </div>
+                </div>
+                <button id="reducedMotionBtn" onclick="toggleReducedMotion()" class="px-3 py-1.5 rounded-xl border border-google-outline dark:border-google-outlineDark hover:bg-google-container dark:hover:bg-google-containerDark text-xs font-bold text-google-textSecondary transition apple-tap" title="تبديل وضع الحركة">
+                    <span id="reducedMotionBtnText">تقليل الحركة</span>
+                </button>
             </div>
 
             <div class="pt-3 border-t border-google-outline dark:border-google-outlineDark text-center">
@@ -999,7 +1147,38 @@
         </div>
     </div>
 
-    <input type="file" id="directFileInput" class="hidden" accept=".pptx,.docx,.xlsx,.csv,.pdf,.zip,.js,.py,.cpp,.html,.css,.txt,.json,.md,image/*">
+    <input type="file" id="directFileInput" class="hidden" accept="*/*">
+
+    <!-- Mobile Bottom Navigation Bar (Apple / Google Style) -->
+    <nav id="mobileBottomNav" class="md:hidden fixed bottom-3 left-4 right-4 z-30 glass-nav rounded-2xl border border-google-outline/80 dark:border-google-outlineDark/80 px-2 py-1.5 flex items-center justify-around shadow-2xl transition-all duration-300">
+        <button onclick="navigateHome()" class="flex flex-col items-center justify-center py-1 px-2.5 rounded-xl text-google-blue dark:text-google-blueDark transition apple-tap" title="المواد">
+            <i data-lucide="layout-grid" class="w-5 h-5"></i>
+            <span class="text-[10px] font-bold mt-0.5">المواد</span>
+        </button>
+
+        <button onclick="toggleRemindersDrawer()" class="flex flex-col items-center justify-center py-1 px-2.5 rounded-xl text-google-textSecondary dark:text-google-textSecondaryDark hover:text-google-textPrimary relative transition apple-tap" title="تذكيراتي">
+            <div class="relative">
+                <i data-lucide="bell" class="w-5 h-5"></i>
+                <span id="mobileBottomRemindersBadge" class="hidden absolute -top-1 -right-1 w-4 h-4 bg-google-red text-white text-[9px] font-black rounded-full items-center justify-center shadow-sm">0</span>
+            </div>
+            <span class="text-[10px] font-bold mt-0.5">تذكيراتي</span>
+        </button>
+
+        <!-- Center Floating Action Button (+) for new subject -->
+        <button onclick="openNewFolderModal()" class="w-12 h-12 -mt-6 rounded-2xl bg-gradient-to-tr from-google-blue via-indigo-600 to-blue-500 text-white flex items-center justify-center shadow-m3-3 transition transform hover:brightness-110 border-2 border-white dark:border-[#1e1f20] apple-tap" title="إضافة مادة جديدة">
+            <i data-lucide="plus" class="w-6 h-6"></i>
+        </button>
+
+        <button onclick="toggleNotesDrawer()" class="flex flex-col items-center justify-center py-1 px-2.5 rounded-xl text-google-textSecondary dark:text-google-textSecondaryDark hover:text-google-textPrimary transition apple-tap" title="ملاحظاتي">
+            <i data-lucide="sticky-note" class="w-5 h-5"></i>
+            <span class="text-[10px] font-bold mt-0.5">ملاحظاتي</span>
+        </button>
+
+        <button onclick="openDeveloperModal()" class="flex flex-col items-center justify-center py-1 px-2.5 rounded-xl text-google-textSecondary dark:text-google-textSecondaryDark hover:text-google-textPrimary transition apple-tap" title="عن المطور">
+            <div class="w-5 h-5 rounded-full bg-gradient-to-tr from-google-blue to-purple-600 flex items-center justify-center text-white text-[10px] font-bold shadow-sm">M</div>
+            <span class="text-[10px] font-bold mt-0.5">المطور</span>
+        </button>
+    </nav>
 
     <script>
         const DB_NAME = 'SalisAcademicDB_v3';
@@ -1302,12 +1481,14 @@
             const notice = document.getElementById('noFilesNotice');
             container.innerHTML = '';
 
+            const videoExts = ['mp4', 'webm', 'mkv', 'mov', 'm4v', 'avi', '3gp', 'ogv'];
             const filtered = activeFilter === 'all' ? files : files.filter(f => {
                 const ext = f.name.split('.').pop().toLowerCase();
                 if (activeFilter === 'pptx') return ext === 'pptx';
                 if (activeFilter === 'docx') return ext === 'docx';
                 if (activeFilter === 'pdf') return ext === 'pdf';
                 if (activeFilter === 'excel') return ['xlsx', 'xls', 'csv'].includes(ext);
+                if (activeFilter === 'video') return videoExts.includes(ext) || (f.type && f.type.startsWith('video/'));
                 return true;
             });
 
@@ -1339,13 +1520,15 @@
         }
 
         function getFileBadgeStyle(ext) {
-            ext = ext.toLowerCase();
+            ext = (ext || '').toLowerCase();
+            const videoExts = ['mp4', 'webm', 'mkv', 'mov', 'm4v', 'avi', '3gp', 'ogv'];
             if (ext === 'pptx') return { bg: '#ea4335', text: 'PPTX', icon: 'presentation' };
             if (ext === 'docx') return { bg: '#1a73e8', text: 'DOCX', icon: 'file-text' };
             if (['xlsx', 'xls', 'csv'].includes(ext)) return { bg: '#34a853', text: 'XLSX', icon: 'table' };
             if (ext === 'pdf') return { bg: '#d93025', text: 'PDF', icon: 'file' };
+            if (videoExts.includes(ext)) return { bg: '#ea4335', text: 'فيديو', icon: 'video' };
             if (ext === 'zip') return { bg: '#f9ab00', text: 'ZIP', icon: 'archive' };
-            return { bg: '#9334e6', text: ext.toUpperCase(), icon: 'code' };
+            return { bg: '#9334e6', text: ext.toUpperCase() || 'FILE', icon: 'code' };
         }
 
         function createFileCard(file, isInsideSubject = false) {
@@ -1354,17 +1537,20 @@
             const parentSubject = allSubjects.find(s => s.id === file.subjectId);
 
             const card = document.createElement('div');
-            card.className = "bg-google-container dark:bg-google-containerDark border border-google-outline dark:border-google-outlineDark hover:border-google-blue dark:hover:border-google-blueDark rounded-2xl p-4 cursor-pointer smooth-m3 shadow-sm hover:shadow-m3-2 flex flex-col justify-between group";
+            card.className = "bg-google-container dark:bg-google-containerDark border border-google-outline dark:border-google-outlineDark hover:border-google-blue dark:hover:border-google-blueDark rounded-2xl p-4 cursor-pointer apple-card shadow-sm hover:shadow-m3-2 flex flex-col justify-between group";
             card.innerHTML = `
                 <div class="flex items-start justify-between">
-                    <div class="w-10 h-10 rounded-xl flex items-center justify-center text-white shrink-0" style="background-color: ${badge.bg}">
+                    <div class="w-10 h-10 rounded-xl flex items-center justify-center text-white shrink-0 shadow-sm" style="background-color: ${badge.bg}">
                         <i data-lucide="${badge.icon}" class="w-5 h-5"></i>
                     </div>
-                    <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 smooth-m3">
-                        <button onclick="event.stopPropagation(); openQuickFileReminder('${file.id}')" class="p-1 rounded-lg text-google-yellow hover:bg-google-yellow/15 transition" title="تذكير بدراسة الملف">
+                    <div class="flex items-center gap-1 opacity-90 sm:opacity-0 sm:group-hover:opacity-100 smooth-m3">
+                        <button onclick="event.stopPropagation(); shareFile('${file.id}')" class="p-1 rounded-lg text-google-blue dark:text-google-blueDark hover:bg-google-blue/15 transition apple-tap" title="مشاركة الملف">
+                            <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
+                        </button>
+                        <button onclick="event.stopPropagation(); openQuickFileReminder('${file.id}')" class="p-1 rounded-lg text-google-yellow hover:bg-google-yellow/15 transition apple-tap" title="تذكير بدراسة الملف">
                             <i data-lucide="bell" class="w-3.5 h-3.5"></i>
                         </button>
-                        <button onclick="event.stopPropagation(); deleteFile('${file.id}')" class="p-1 rounded-lg text-red-400 hover:bg-red-500/10 transition" title="حذف">
+                        <button onclick="event.stopPropagation(); deleteFile('${file.id}')" class="p-1 rounded-lg text-red-400 hover:bg-red-500/10 transition apple-tap" title="حذف">
                             <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                         </button>
                     </div>
@@ -1803,18 +1989,30 @@
             if (completedCountEl) completedCountEl.textContent = completed.length;
 
             const navBadge = document.getElementById('remindersNavBadge');
+            const mobileBottomBadge = document.getElementById('mobileBottomRemindersBadge');
             const bellIcon = document.getElementById('navbarBellIcon');
-            if (navBadge) {
-                if (pending.length > 0) {
+            if (pending.length > 0) {
+                if (navBadge) {
                     navBadge.textContent = pending.length;
                     navBadge.classList.remove('hidden');
                     navBadge.classList.add('flex');
-                    if (bellIcon) bellIcon.classList.add('bell-ring-active');
-                } else {
+                }
+                if (mobileBottomBadge) {
+                    mobileBottomBadge.textContent = pending.length;
+                    mobileBottomBadge.classList.remove('hidden');
+                    mobileBottomBadge.classList.add('flex');
+                }
+                if (bellIcon) bellIcon.classList.add('bell-ring-active');
+            } else {
+                if (navBadge) {
                     navBadge.classList.add('hidden');
                     navBadge.classList.remove('flex');
-                    if (bellIcon) bellIcon.classList.remove('bell-ring-active');
                 }
+                if (mobileBottomBadge) {
+                    mobileBottomBadge.classList.add('hidden');
+                    mobileBottomBadge.classList.remove('flex');
+                }
+                if (bellIcon) bellIcon.classList.remove('bell-ring-active');
             }
 
             const sidebarBadge = document.getElementById('sidebarRemindersCountBadge');
@@ -2207,6 +2405,8 @@
         async function openFileInViewer(fileRecord) {
             currentActiveFile = fileRecord;
             closeSidebarMobile();
+            const mobileNav = document.getElementById('mobileBottomNav');
+            if (mobileNav) mobileNav.classList.add('hidden');
 
             const overlay = document.getElementById('fileLaunchOverlay');
             const fileNameEl = document.getElementById('launchFileName');
@@ -2274,6 +2474,7 @@
             const startTime = Date.now();
             try {
                 const fileBlob = fileRecord.blob;
+                const videoExts = ['mp4', 'webm', 'mkv', 'mov', 'm4v', 'avi', '3gp', 'ogv'];
                 if (ext === 'pptx') {
                     await renderFullPPTX(fileBlob);
                 } else if (ext === 'docx') {
@@ -2284,6 +2485,8 @@
                     await renderZIP(fileBlob);
                 } else if (ext === 'pdf') {
                     renderPDF(fileBlob);
+                } else if (videoExts.includes(ext) || (fileBlob.type && fileBlob.type.startsWith('video/'))) {
+                    await renderVideo(fileBlob, fileRecord);
                 } else if (fileBlob.type && fileBlob.type.startsWith('image/')) {
                     renderImage(fileBlob);
                 } else {
@@ -2313,7 +2516,17 @@
             if (document.fullscreenElement || viewerContainer.classList.contains('viewer-fullscreen-mode')) {
                 toggleViewerFullscreen();
             }
+            const videoEl = document.getElementById('salisMainVideoPlayer');
+            if (videoEl) {
+                try {
+                    videoEl.pause();
+                    videoEl.removeAttribute('src');
+                    videoEl.load();
+                } catch(e) {}
+            }
             viewerContainer.classList.add('hidden');
+            const mobileNav = document.getElementById('mobileBottomNav');
+            if (mobileNav) mobileNav.classList.remove('hidden');
             if (currentSubjectId) {
                 openSubjectFolder(currentSubjectId);
             } else if (allSubjects.length > 0) {
@@ -2321,6 +2534,7 @@
             } else {
                 showWelcomeView();
             }
+            lucide.createIcons();
         }
 
         async function renderFullPPTX(blob) {
@@ -2438,6 +2652,180 @@
                 </div>
             `;
             Prism.highlightAll();
+        }
+
+        async function renderVideo(blob, fileRecord) {
+            generalMount.classList.remove('hidden');
+            const videoUrl = URL.createObjectURL(blob);
+            
+            generalMount.innerHTML = `
+                <div class="w-full max-w-4xl mx-auto flex flex-col items-center space-y-4">
+                    <!-- Video Container with Apple/Google styling -->
+                    <div class="w-full rounded-3xl overflow-hidden bg-black shadow-2xl border border-google-outline dark:border-google-outlineDark relative group">
+                        <video id="salisMainVideoPlayer" controls playsinline preload="metadata" class="w-full max-h-[70vh] bg-black rounded-3xl focus:outline-none shadow-inner">
+                            <source src="${videoUrl}" type="${blob.type || 'video/mp4'}">
+                            عذراً، متصفحك ما بيدعم تشغيل صيغة هالفيديو مباشرة، بتقدر تنزله لجهازك من زر التحميل!
+                        </video>
+                    </div>
+
+                    <!-- Lecture Study Controls Toolbar -->
+                    <div class="w-full flex flex-wrap items-center justify-between gap-3 p-4 rounded-3xl bg-google-container dark:bg-google-containerDark border border-google-outline dark:border-google-outlineDark shadow-sm smooth-m3">
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <span class="text-xs font-bold text-google-textSecondary dark:text-google-textSecondaryDark flex items-center gap-1.5">
+                                <i data-lucide="zap" class="w-4 h-4 text-google-yellow"></i>
+                                <span>سرعة المحاضرة:</span>
+                            </span>
+                            <div class="flex items-center gap-1 bg-google-containerHigh dark:bg-google-containerHighDark p-1 rounded-2xl border border-google-outline dark:border-google-outlineDark">
+                                <button type="button" onclick="setVideoSpeed(0.75)" class="video-speed-btn px-2.5 py-1 rounded-xl text-xs font-bold text-google-textSecondary hover:text-google-textPrimary transition apple-tap" data-speed="0.75">0.75x</button>
+                                <button type="button" onclick="setVideoSpeed(1)" class="video-speed-btn px-2.5 py-1 rounded-xl text-xs font-bold bg-google-blue text-white shadow-sm transition apple-tap" data-speed="1">1x</button>
+                                <button type="button" onclick="setVideoSpeed(1.25)" class="video-speed-btn px-2.5 py-1 rounded-xl text-xs font-bold text-google-textSecondary hover:text-google-textPrimary transition apple-tap" data-speed="1.25">1.25x</button>
+                                <button type="button" onclick="setVideoSpeed(1.5)" class="video-speed-btn px-2.5 py-1 rounded-xl text-xs font-bold text-google-textSecondary hover:text-google-textPrimary transition apple-tap" data-speed="1.5">1.5x</button>
+                                <button type="button" onclick="setVideoSpeed(2)" class="video-speed-btn px-2.5 py-1 rounded-xl text-xs font-bold text-google-textSecondary hover:text-google-textPrimary transition apple-tap" data-speed="2">2x</button>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <button type="button" onclick="skipVideo(-10)" class="px-3 py-1.5 rounded-xl border border-google-outline dark:border-google-outlineDark hover:bg-google-containerHigh dark:hover:bg-google-containerHighDark text-xs font-bold text-google-textSecondary transition flex items-center gap-1.5 apple-tap" title="رجوع 10 ثواني">
+                                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                                <span>-10ث</span>
+                            </button>
+                            <button type="button" onclick="skipVideo(10)" class="px-3 py-1.5 rounded-xl border border-google-outline dark:border-google-outlineDark hover:bg-google-containerHigh dark:hover:bg-google-containerHighDark text-xs font-bold text-google-textSecondary transition flex items-center gap-1.5 apple-tap" title="تقديم 10 ثواني">
+                                <span>+10ث</span>
+                                <i data-lucide="rotate-cw" class="w-3.5 h-3.5"></i>
+                            </button>
+                            <button type="button" onclick="toggleVideoPiP()" class="px-3 py-1.5 rounded-xl border border-google-outline dark:border-google-outlineDark hover:bg-google-blue hover:text-white text-xs font-bold text-google-textSecondary transition flex items-center gap-1.5 apple-tap" title="نافذة عائمة لمشاهدة المحاضرة وكتابة الملاحظات">
+                                <i data-lucide="picture-in-picture-2" class="w-4 h-4"></i>
+                                <span class="hidden sm:inline">نافذة عائمة</span>
+                            </button>
+                            <button type="button" onclick="shareCurrentActiveFile()" class="px-3 py-1.5 rounded-xl border border-google-outline dark:border-google-outlineDark hover:bg-google-blue hover:text-white text-xs font-bold text-google-textSecondary transition flex items-center gap-1.5 apple-tap" title="مشاركة الفيديو">
+                                <i data-lucide="share-2" class="w-4 h-4"></i>
+                                <span class="hidden sm:inline">مشاركة</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        function setVideoSpeed(speed) {
+            const player = document.getElementById('salisMainVideoPlayer');
+            if (player) {
+                player.playbackRate = speed;
+                document.querySelectorAll('.video-speed-btn').forEach(b => {
+                    if (parseFloat(b.getAttribute('data-speed')) === speed) {
+                        b.className = "video-speed-btn px-2.5 py-1 rounded-xl text-xs font-bold bg-google-blue text-white shadow-sm transition apple-tap";
+                    } else {
+                        b.className = "video-speed-btn px-2.5 py-1 rounded-xl text-xs font-bold text-google-textSecondary hover:text-google-textPrimary transition apple-tap";
+                    }
+                });
+            }
+        }
+
+        function skipVideo(seconds) {
+            const player = document.getElementById('salisMainVideoPlayer');
+            if (player) {
+                player.currentTime = Math.max(0, Math.min(player.duration || Infinity, player.currentTime + seconds));
+            }
+        }
+
+        async function toggleVideoPiP() {
+            const player = document.getElementById('salisMainVideoPlayer');
+            if (!player) return;
+            try {
+                if (document.pictureInPictureElement) {
+                    await document.exitPictureInPicture();
+                } else if (document.pictureInPictureEnabled && player.requestPictureInPicture) {
+                    await player.requestPictureInPicture();
+                } else {
+                    showToastMessage('ميزة النافذة العائمة غير مدعومة على متصفحك');
+                }
+            } catch (e) {
+                console.log('PiP toggle error:', e);
+            }
+        }
+
+        // ==================== FILE SHARING SYSTEM ====================
+        async function shareFile(fileId) {
+            const file = allFiles.find(f => f.id === fileId);
+            if (!file) return;
+            await performShare(file);
+        }
+
+        async function shareCurrentActiveFile() {
+            if (!currentActiveFile) return;
+            await performShare(currentActiveFile);
+        }
+
+        async function performShare(fileRecord) {
+            try {
+                const fileBlob = fileRecord.blob;
+                if (!fileBlob) {
+                    showToastMessage('الملف غير متوفر للمشاركة');
+                    return;
+                }
+
+                const mimeType = fileBlob.type || 'application/octet-stream';
+                let shareFileObj = null;
+                try {
+                    shareFileObj = new File([fileBlob], fileRecord.name, { type: mimeType });
+                } catch (e) {
+                    // Fallback
+                }
+
+                if (navigator.share) {
+                    if (shareFileObj && navigator.canShare && navigator.canShare({ files: [shareFileObj] })) {
+                        await navigator.share({
+                            files: [shareFileObj],
+                            title: fileRecord.name,
+                            text: `ملف من منصة سَلِس الأكاديمية: ${fileRecord.name}`
+                        });
+                        showToastMessage('تمت مشاركة الملف بنجاح! 🚀');
+                        return;
+                    } else {
+                        await navigator.share({
+                            title: fileRecord.name,
+                            text: `ملف دراسي من منصة سَلِس: ${fileRecord.name}`
+                        });
+                        showToastMessage('تمت المشاركة بنجاح! 🚀');
+                        return;
+                    }
+                }
+            } catch (err) {
+                if (err.name === 'AbortError') return;
+                console.log('Native share failed or canceled, falling back to download:', err);
+            }
+
+            // Fallback download if Web Share API is not supported
+            try {
+                const url = URL.createObjectURL(fileRecord.blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fileRecord.name;
+                a.click();
+                setTimeout(() => URL.revokeObjectURL(url), 4000);
+                showToastMessage('تم تنزيل الملف لجهازك لتشاركه بكل سهولة! 📤');
+            } catch (e) {
+                showToastMessage('حدث خطأ أثناء تنزيل الملف للمشاركة');
+            }
+        }
+
+        function showToastMessage(msg) {
+            let toast = document.getElementById('salisGeneralToast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'salisGeneralToast';
+                toast.className = 'fixed bottom-20 left-1/2 -translate-x-1/2 z-[300000] px-4 py-2.5 rounded-2xl glass-nav border border-google-blue/30 text-google-textPrimary dark:text-google-textPrimaryDark shadow-2xl flex items-center gap-2 text-xs font-bold transition-all duration-300 transform translate-y-4 opacity-0 pointer-events-none';
+                document.body.appendChild(toast);
+            }
+            toast.innerHTML = `<i data-lucide="check-circle-2" class="w-4 h-4 text-google-green shrink-0"></i><span>${msg}</span>`;
+            lucide.createIcons();
+            toast.classList.remove('translate-y-4', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+            setTimeout(() => {
+                toast.classList.add('translate-y-4', 'opacity-0');
+                toast.classList.remove('translate-y-0', 'opacity-100');
+            }, 3500);
         }
 
         const notesDrawer = document.getElementById('notesDrawer');
@@ -2599,8 +2987,61 @@
         window.onReminderSubjectChange = onReminderSubjectChange;
         window.openActiveFileFromReminder = openActiveFileFromReminder;
 
+        // Video & Sharing exports
+        window.renderVideo = renderVideo;
+        window.setVideoSpeed = setVideoSpeed;
+        window.skipVideo = skipVideo;
+        window.toggleVideoPiP = toggleVideoPiP;
+        window.shareFile = shareFile;
+        window.shareCurrentActiveFile = shareCurrentActiveFile;
+        window.showToastMessage = showToastMessage;
+
+        // 2026 Accessibility Motion System
+        function initReducedMotion() {
+            const savedPref = localStorage.getItem('salis_reduced_motion');
+            const systemPref = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            const isReduced = savedPref !== null ? savedPref === 'true' : systemPref;
+            applyReducedMotionUI(isReduced);
+
+            if (window.matchMedia) {
+                try {
+                    window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', (e) => {
+                        if (localStorage.getItem('salis_reduced_motion') === null) {
+                            applyReducedMotionUI(e.matches);
+                        }
+                    });
+                } catch(e) {}
+            }
+        }
+
+        function toggleReducedMotion() {
+            const isCurrentlyReduced = document.documentElement.classList.contains('reduced-motion');
+            const newState = !isCurrentlyReduced;
+            localStorage.setItem('salis_reduced_motion', newState ? 'true' : 'false');
+            applyReducedMotionUI(newState);
+            showToastMessage(newState ? 'تم تفعيل وضع تقليل الحركة لراحة العين 🧘' : 'تم تفعيل الحركات الانسيابية الذكية ✨');
+        }
+
+        function applyReducedMotionUI(isReduced) {
+            const statusText = document.getElementById('reducedMotionStatusText');
+            const btnText = document.getElementById('reducedMotionBtnText');
+            if (isReduced) {
+                document.documentElement.classList.add('reduced-motion');
+                if (statusText) statusText.textContent = 'وضع الحركة الهادئة (مريح للعين)';
+                if (btnText) btnText.textContent = 'تفعيل الحركات';
+            } else {
+                document.documentElement.classList.remove('reduced-motion');
+                if (statusText) statusText.textContent = 'حركات انسيابية ناعمة مفعلة';
+                if (btnText) btnText.textContent = 'تقليل الحركة';
+            }
+        }
+
+        window.toggleReducedMotion = toggleReducedMotion;
+        window.initReducedMotion = initReducedMotion;
+
         async function bootApp() {
             try {
+                initReducedMotion();
                 await initDB();
                 await loadAppData();
                 checkDueReminders();
