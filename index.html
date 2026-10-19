@@ -380,6 +380,10 @@
         </div>
 
         <div class="flex items-center gap-1.5 sm:gap-2">
+            <button onclick="forceUpdateApp()" class="p-2 sm:p-2.5 rounded-full hover:bg-google-containerHigh dark:hover:bg-google-containerHighDark text-google-textSecondary dark:text-google-textSecondaryDark transition apple-tap" title="تحديث التطبيق وتنظيف الكاش">
+                <i data-lucide="refresh-cw" class="w-5 h-5"></i>
+            </button>
+
             <button onclick="openDeveloperModal()" class="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full hover:bg-google-containerHigh dark:hover:bg-google-containerHighDark text-google-textSecondary dark:text-google-textSecondaryDark transition text-xs font-bold apple-tap" title="عن المطور">
                 <div class="w-5 h-5 rounded-full bg-gradient-to-tr from-google-blue to-purple-600 flex items-center justify-center text-white text-[10px] font-bold shadow-sm">M</div>
                 <span class="hidden md:inline">عن المطور</span>
@@ -1138,6 +1142,20 @@
                     <span id="reducedMotionBtnText">تقليل الحركة</span>
                 </button>
             </div>
+
+            <!-- Force Update & Clear Cache (PWA) -->
+            <button onclick="forceUpdateApp()" class="w-full flex items-center justify-between p-3.5 rounded-2xl bg-google-containerHigh dark:bg-google-containerHighDark border border-google-outline dark:border-google-outlineDark hover:border-google-blue hover:bg-google-blue/5 transition apple-tap text-right">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-xl bg-google-yellow/20 text-google-yellow flex items-center justify-center shrink-0">
+                        <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs font-bold text-google-textPrimary dark:text-google-textPrimaryDark block">تحديث التطبيق وتنظيف الكاش</span>
+                        <span class="text-[10px] text-google-textSecondary dark:text-google-textSecondaryDark">يجلب أحدث إصدار فوراً ويمسح الملفات القديمة المخزنة</span>
+                    </div>
+                </div>
+                <span class="text-[11px] font-bold text-google-blue dark:text-google-blueDark bg-google-blueContainer/50 dark:bg-google-blueContainerDark/50 px-2.5 py-1 rounded-lg">تحديث الآن</span>
+            </button>
 
             <div class="pt-3 border-t border-google-outline dark:border-google-outlineDark text-center">
                 <p class="text-[11px] text-google-textSecondary dark:text-google-textSecondaryDark leading-relaxed">
@@ -3039,6 +3057,29 @@
         window.toggleReducedMotion = toggleReducedMotion;
         window.initReducedMotion = initReducedMotion;
 
+        async function forceUpdateApp() {
+            showToastMessage('جاري تنظيف الكاش وتحديث التطبيق... 🔄');
+            try {
+                if ('caches' in window) {
+                    const keys = await caches.keys();
+                    await Promise.all(keys.map(k => caches.delete(k)));
+                }
+                if ('serviceWorker' in navigator) {
+                    const regs = await navigator.serviceWorker.getRegistrations();
+                    for (const reg of regs) {
+                        await reg.unregister();
+                    }
+                }
+                setTimeout(() => {
+                    const cleanUrl = window.location.origin + window.location.pathname + '?refresh=' + Date.now();
+                    window.location.replace(cleanUrl);
+                }, 600);
+            } catch (e) {
+                window.location.reload();
+            }
+        }
+        window.forceUpdateApp = forceUpdateApp;
+
         async function bootApp() {
             try {
                 initReducedMotion();
@@ -3046,7 +3087,29 @@
                 await loadAppData();
                 checkDueReminders();
                 if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
-                    navigator.serviceWorker.register('./sw.js').catch(() => {});
+                    navigator.serviceWorker.register('./sw.js').then((reg) => {
+                        // Check for updates on boot
+                        reg.update().catch(() => {});
+                        reg.addEventListener('updatefound', () => {
+                            const newWorker = reg.installing;
+                            if (!newWorker) return;
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    newWorker.postMessage({ action: 'skipWaiting' });
+                                    showToastMessage('تم تنزيل تحديث جديد لتطبيق سَلِس! جاري إعادة التحميل... 🚀');
+                                    setTimeout(() => window.location.reload(), 1200);
+                                }
+                            });
+                        });
+                    }).catch(() => {});
+
+                    let refreshing = false;
+                    navigator.serviceWorker.addEventListener('controllerchange', () => {
+                        if (!refreshing) {
+                            refreshing = true;
+                            window.location.reload();
+                        }
+                    });
                 }
             } catch (e) {
                 console.error('App init error:', e);
